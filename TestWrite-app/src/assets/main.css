@@ -1,35 +1,136 @@
-@import './base.css';
-
+body {
+  margin: 0;
+}
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  font-weight: normal;
+  --color1: green;
+  --color2: darkgreen;
+
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  min-height: 100vh;
 }
 
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-  padding: 3px;
+header,
+main,
+footer {
+  width: 100%;
+}
+header div:first-child,
+main div:first-child,
+footer div:first-child {
+  max-width: 1200px;
+  margin: auto;
+  padding: 15px;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
+header {
+  grid-row: 1 / 2;
+  background-color: var(--color1);
 }
 
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
+main {
+  --color: black;
+  --backgroundColor: white;
+  --errorColor: red;
+  --fontFamily: arial;
+  --fontFamilyEvenHeader: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  --fontFamilyUnevenHeader: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
+    Arial, sans-serif;
 
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
+  background-color: var(--backgroundColor);
+  color: var(--color);
+  grid-row: 2 / 3;
+}
+main.dark {
+  --color: white;
+  --backgroundColor: black;
+}
+
+main p,
+main span,
+main label {
+  font-family: var(--fontFamily);
+}
+
+main p.errorMessage {
+  color: var(--errorColor);
+  margin: 0;
+}
+
+main h1,
+main h2,
+main h3,
+main h4,
+main h5,
+main h6 {
+  margin: 0;
+}
+
+main h1 {
+  margin-bottom: 20px;
+  font-size: 50pt;
+  font-family: var(--fontFamilyUnevenHeader);
+}
+
+main h2 {
+  font-size: 30pt;
+  font-family: var(--fontFamilyEvenHeader);
+}
+
+main h3 {
+  font-size: 24pt;
+  font-family: var(--fontFamilyUnevenHeader);
+}
+
+main h4 {
+  font-size: 18pt;
+  font-family: var(--fontFamilyEvenHeader);
+}
+
+main h5 {
+  font-size: 16pt;
+  font-family: var(--fontFamilyUnevenHeader);
+}
+
+main h6 {
+  font-size: 14pt;
+  font-family: var(--fontFamilyEvenHeader);
+}
+
+footer {
+  grid-row: 3 / 4;
+  background-color: var(--color1);
+}
+
+button.primaryButton,
+button.secondaryButton {
+  height: 30px;
+  min-width: 150px;
+  border-radius: 25px;
+  border-width: 3px;
+  border-style: solid;
+}
+button.primaryButton:hover,
+button.secondaryButton:hover {
+  cursor: pointer;
+}
+button.primaryButton {
+  background-color: var(--color1);
+  color: white;
+  border-color: var(--color1);
+}
+button.primaryButton:hover {
+  background-color: var(--color2);
+  color: white;
+  border-color: var(--color2);
+}
+button.secondaryButton {
+  background-color: white;
+  color: var(--color2);
+  border-color: var(--color2);
+}
+button.secondaryButton:hover {
+  background-color: var(--color2);
+  color: white;
+  border-color: var(--color2);
 }
