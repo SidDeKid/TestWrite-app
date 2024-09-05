@@ -1,0 +1,105 @@
+.buttonSection {
+  display: flex;
+  column-gap: 15px;
+}
+
+button.primaryButton,
+button.secondaryButton {
+  height: 40px;
+  min-width: 200px;
+  padding: 0 15px;
+  font-size: 15pt;
+  font-family: var(--fontFamily);
+  border-radius: 25px;
+  border-width: 3px;
+  border-style: solid;
+}
+
+button.primaryButton:hover,
+button.secondaryButton:hover {
+  cursor: pointer;
+}
+
+button.primaryButton {
+  background-color: var(--color1);
+  color: white;
+  border-color: var(--color1);
+}
+
+button.primaryButton:hover {
+  background-color: var(--color2);
+  color: white;
+  border-color: var(--color2);
+}
+
+button.secondaryButton {
+  background-color: white;
+  color: var(--color2);
+  border-color: var(--color2);
+}
+
+button.secondaryButton:hover {
+  background-color: var(--color2);
+  color: white;
+  border-color: var(--color2);
+}
+
+main.dark button.secondaryButton {
+  border-color: var(--color6);
+}
+
+main.dark button.secondaryButton:hover {
+  border-color: var(--color2);
+}
+
+label.primaryLabelButton,
+label.secondaryLabelButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  height: 35.2px;
+  min-width: 165.2px;
+  padding: 0 15px;
+  font-size: 15pt;
+  font-family: var(--fontFamily);
+  border-radius: 25px;
+  border-width: 3px;
+  border-style: solid;
+}
+
+label.primaryLabelButton:hover,
+label.secondaryLabelButton:hover {
+  cursor: pointer;
+}
+
+label.primaryLabelButton {
+  background-color: var(--color1);
+  color: white;
+  border-color: var(--color1);
+}
+
+label.primaryLabelButton:hover {
+  background-color: var(--color2);
+  color: white;
+  border-color: var(--color2);
+}
+
+label.secondaryLabelButton {
+  background-color: white;
+  color: var(--color2);
+  border-color: var(--color2);
+}
+
+label.secondaryLabelButton:hover {
+  background-color: var(--color2);
+  color: white;
+  border-color: var(--color2);
+}
+
+main.dark label.secondaryLabelButton {
+  border-color: var(--color6);
+}
+
+main.dark label.secondaryLabelButton:hover {
+  border-color: var(--color2);
+}
