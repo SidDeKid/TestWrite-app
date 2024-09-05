@@ -1,4 +1,4 @@
-import APIHelper from "@/helpers/APIHelper";
+import { APIHelper } from "@/helpers/APIHelper";
 import { reactive } from "vue";
 import axios from "axios";
 
@@ -35,8 +35,6 @@ export default class User {
     this._password = v;
   }
 
-  private APIBase: string = new APIHelper().base;
-
   constructor() {}
 
   /**
@@ -56,7 +54,7 @@ export default class User {
 
     await axios
       .post(
-        this.APIBase + "login/",
+        APIHelper.base + "login/",
         JSON.stringify({
           username: this.userName,
           password: this.password
@@ -111,7 +109,7 @@ export default class User {
    * @returns Succes of the log out, true or false.
    */
   public async logOut() {
-    return fetch(this.APIBase + "logout/", {
+    return fetch(APIHelper.base + "logout/", {
       method: "post",
       headers: {
         "Content-Type": "application/json"
@@ -129,4 +127,4 @@ export default class User {
   }
 }
 
-export const Auth = reactive(new User());
+export const auth = reactive(new User());

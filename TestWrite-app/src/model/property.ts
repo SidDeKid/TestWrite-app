@@ -1,6 +1,7 @@
-import APIHelper from "@/helpers/APIHelper";
+import { APIHelper } from "@/helpers/APIHelper";
 import { reactive } from "vue";
 import axios from "axios";
+import { errorMessageHelper } from "@/helpers/errorMessageHelper";
 
 export default class Property {
   private _id!: number;
@@ -11,103 +12,53 @@ export default class Property {
     this._id = v;
   }
 
-  private _class_id!: number;
-  public get class_id(): number {
-    return this._class_id;
+  private _modelClass_id!: number;
+  public get modelClass_id(): number {
+    return this._modelClass_id;
   }
-  private set class_id(v: number) {
-    this._class_id = v;
+  private set modelClass_id(v: number) {
+    this._modelClass_id = v;
   }
 
-  private _name: string | null = null;
-  public get name(): string | null {
+  private _name!: string;
+  public get name(): string {
     return this._name;
   }
-  private set name(v: string | null) {
+  private set name(v: string) {
     this._name = v;
   }
 
-  private _type: string | null = null;
-  public get type(): string | null {
+  private _type!: string;
+  public get type(): string {
     return this._type;
   }
-  private set type(v: string | null) {
+  private set type(v: string) {
     this._type = v;
   }
 
-  private _nullable: boolean | null = null;
-  public get nullable(): boolean | null {
+  private _nullable!: boolean;
+  public get nullable(): boolean {
     return this._nullable;
   }
-  private set nullable(v: boolean | null) {
+  private set nullable(v: boolean) {
     this._nullable = v;
   }
 
-  private APIBase: string = new APIHelper().properties;
-
-  constructor(
-    id: number,
-    class_id: number,
-    name?: string | null,
-    type?: string | null,
-    nullable?: boolean | null
-  ) {
+  constructor(id: number, modelClass_id: number, name: string, type: string, nullable: boolean) {
     this.id = id;
-    this.class_id = class_id;
-    if (name !== undefined) this.name = name;
-    if (type !== undefined) this.type = type;
-    if (nullable !== undefined) this.nullable = nullable;
-  }
-
-  /**
-   * Gets it's data out of the API.
-   * @returns Succes of the log in, true or errormessage.
-   */
-  public async getData(): Promise<string | true> {
-    let result: true | string = "Failed due to missing implimentation.";
-
-    await axios
-      .get(this.APIBase + this.id, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error(String(response));
-        }
-        return response;
-      })
-      .then((response) => {
-        try {
-          this.id = response.data.id as number;
-          this.class_id = response.data.class_id as number;
-          this.name = response.data.name as string | null;
-          this.type = response.data.type as string | null;
-          this.nullable = response.data.nullable as boolean | null;
-
-          result = true;
-        } catch (error) {
-          result = String(error);
-        }
-      })
-      .catch((response) => {
-        result = response;
-      });
-
-    return result;
+    this.modelClass_id = modelClass_id;
+    this.name = name;
+    this.type = type;
+    this.nullable = nullable;
   }
 }
 
 export const properties = reactive({
-  data: new Array<Property>(),
-  async fillList(): Promise<true | string> {
-    this.data = new Array<Property>();
-
-    let result: string | true = "Failed due to missing implimentation.";
+  async get(modelClassId: number): Promise<Array<Property> | string> {
+    let result: Array<Property> | string = errorMessageHelper.notImplemented;
 
     await axios
-      .get(new APIHelper().properties, {
+      .get(`${APIHelper.modelClasses}${modelClassId}/properties`, {
         headers: {
           "Content-Type": "utf-8"
         }
@@ -120,24 +71,112 @@ export const properties = reactive({
       })
       .then((response) => {
         try {
+          result = new Array<Property>();
+
           for (const data of response.data) {
             const property = new Property(
               data.id as number,
-              data.class_id as number,
-              data.name as string | null,
-              data.type as string | null,
-              data.nullable as boolean | null
+              data.modelClass_id as number,
+              data.name as string,
+              data.type as string,
+              (data.nullable === 1) as boolean
             );
-            this.data.push(property);
+            result.push(property);
           }
-
-          result = true;
         } catch (error) {
-          result = String(error);
+          result = errorMessageHelper.unknown;
         }
       })
       .catch((response) => {
-        result = String(response);
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
+      });
+
+    return result;
+  },
+
+  /**
+   * Makes a unique id.
+   */
+  async getUniqueId(): Promise<string | number> {
+    let result: string | number = errorMessageHelper.notImplemented;
+
+    await axios
+      .get(`${APIHelper.properties}id`, {
+        headers: {
+          "Content-Type": "utf-8"
+        }
+      })
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error(String(response));
+        }
+        return response;
+      })
+      .then((response) => {
+        try {
+          result = response.data as number;
+        } catch (error) {
+          result = errorMessageHelper.unknown;
+        }
+      })
+      .catch((response) => {
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
+      });
+
+    return result;
+  },
+
+  async create(property: Property): Promise<string | true> {
+    let result = errorMessageHelper.notImplemented as string | true;
+
+    await axios
+      .post(APIHelper.properties, {
+        id: property.id,
+        model_class_id: property.modelClass_id,
+        name: property.name,
+        type: property.type,
+        nullable: property.nullable ? 1 : 0
+      })
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error(String(response));
+        }
+      })
+      .catch((response) => {
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "422":
+            result = errorMessageHelper.badInput;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
       });
 
     return result;

@@ -1,6 +1,8 @@
-import APIHelper from "@/helpers/APIHelper";
+import { APIHelper } from "@/helpers/APIHelper";
 import { reactive } from "vue";
 import axios from "axios";
+import { currentProject } from "@/model/project";
+import { errorMessageHelper } from "@/helpers/errorMessageHelper";
 
 export default class Test {
   private _id!: number;
@@ -15,7 +17,7 @@ export default class Test {
   public get project_id(): number {
     return this._project_id;
   }
-  private set project_id(v: number) {
+  public set project_id(v: number) {
     this._project_id = v;
   }
 
@@ -23,71 +25,119 @@ export default class Test {
   public get happyRoad(): boolean {
     return this._happyRoad;
   }
-  private set happyRoad(v: boolean) {
+  public set happyRoad(v: boolean) {
     this._happyRoad = v;
+  }
+
+  private _name: string | null = null;
+  public get name(): string | null {
+    return this._name;
+  }
+  public set name(v: string | null) {
+    this._name = v;
   }
 
   private _testPath: string | null = null;
   public get testPath(): string | null {
     return this._testPath;
   }
-  private set testPath(v: string | null) {
+  public set testPath(v: string | null) {
     this._testPath = v;
   }
 
-  private _expected_result: string | null = null;
-  public get expected_result(): string | null {
-    return this._expected_result;
+  private _expectedResult: string | null = null;
+  public get expectedResult(): string | null {
+    return this._expectedResult;
   }
-  private set expected_result(v: string | null) {
-    this._expected_result = v;
+  public set expectedResult(v: string | null) {
+    this._expectedResult = v;
   }
 
-  private _tested_result: string | null = null;
-  public get tested_result(): string | null {
-    return this._tested_result;
+  private _testedResult: string | null = null;
+  public get testedResult(): string | null {
+    return this._testedResult;
   }
-  private set tested_result(v: string | null) {
-    this._tested_result = v;
+  public set testedResult(v: string | null) {
+    this._testedResult = v;
   }
 
   private _succes: boolean | null = null;
   public get succes(): boolean | null {
     return this._succes;
   }
-  private set succes(v: boolean | null) {
+  public set succes(v: boolean | null) {
     this._succes = v;
   }
-
-  private APIBase: string = new APIHelper().tests;
 
   constructor(
     id: number,
     project_id: number,
     happyRoad: boolean,
+    name?: string | null,
     testPath?: string | null,
-    expected_result?: string | null,
-    tested_result?: string | null,
+    expectedResult?: string | null,
+    testedResult?: string | null,
     succes?: boolean | null
   ) {
     this.id = id;
     this.project_id = project_id;
     this.happyRoad = happyRoad;
+    if (name !== undefined) this.name = name;
     if (testPath !== undefined) this.testPath = testPath;
-    if (expected_result !== undefined) this.expected_result = expected_result;
-    if (tested_result !== undefined) this.tested_result = tested_result;
+    if (expectedResult !== undefined) this.expectedResult = expectedResult;
+    if (testedResult !== undefined) this.testedResult = testedResult;
     if (succes !== undefined) this.succes = succes;
   }
 
-  /**
-   * Gets it's data out of the API.
-   * @returns Succes of the log in, true or errormessage.
-   */
-  public async getData(): Promise<string | true> {
-    let result: true | string = "Failed due to missing implimentation.";
+  public async update(): Promise<string | true> {
+    let result = errorMessageHelper.notImplemented as string | true;
 
     await axios
-      .get(this.APIBase + this.id, {
+      .put(APIHelper.tests + this.id, {
+        project_id: this.project_id,
+        happy_road: this.happyRoad ? 1 : 0,
+        name: this.name,
+        test_path: this.testPath,
+        expected_result: this.expectedResult,
+        tested_result: this.testedResult,
+        succes: this.succes === null ? null : this.succes ? 1 : 0
+      })
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error(String(response));
+        }
+
+        const index = tests.data.findIndex((dataTest) => (dataTest.id = this.id));
+        if (index !== -1) {
+          tests.data[index] = this;
+          result = true;
+        } else result = errorMessageHelper.resourceNotFound;
+      })
+      .catch((response) => {
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "422":
+            result = errorMessageHelper.badInput;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
+      });
+
+    return result;
+  }
+
+  public async delete(): Promise<string | true> {
+    let result = errorMessageHelper.notImplemented as string | true;
+
+    await axios
+      .delete(APIHelper.tests + this.id, {
         headers: {
           "Content-Type": "utf-8"
         }
@@ -96,25 +146,25 @@ export default class Test {
         if (response.status !== 200) {
           throw new Error(String(response));
         }
-        return response;
-      })
-      .then((response) => {
-        try {
-          this.id = response.data.id as number;
-          this.project_id = response.data.project_id as number;
-          this.happyRoad = response.data.happyRoad as boolean;
-          this.testPath = response.data.testPath as string | null;
-          this.expected_result = response.data.expected_result as string | null;
-          this.tested_result = response.data.tested_result as string | null;
-          this.succes = response.data.succes as boolean | null;
 
+        const index = tests.data.findIndex((dataTest) => (dataTest.id = this.id));
+        if (index !== -1) {
+          tests.data.splice(index, 1);
           result = true;
-        } catch (error) {
-          result = String(error);
-        }
+        } else result = errorMessageHelper.resourceNotFound;
       })
       .catch((response) => {
-        result = response;
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
       });
 
     return result;
@@ -123,13 +173,17 @@ export default class Test {
 
 export const tests = reactive({
   data: new Array<Test>(),
-  async fillList(): Promise<true | string> {
+  async fillList(projectId?: number): Promise<true | string> {
     this.data = new Array<Test>();
+    let result: string | true = errorMessageHelper.notImplemented;
 
-    let result: string | true = "Failed due to missing implimentation.";
+    if (projectId === undefined) {
+      if (currentProject.id === null) return "No project selected.";
+      projectId = currentProject.id;
+    }
 
     await axios
-      .get(new APIHelper().tests, {
+      .get(`${APIHelper.projects}${projectId}/tests`, {
         headers: {
           "Content-Type": "utf-8"
         }
@@ -146,22 +200,115 @@ export const tests = reactive({
             const test = new Test(
               data.id as number,
               data.project_id as number,
-              data.happyRoad as boolean,
-              data.testPath as string | null,
+              (data.happy_road === 1) as boolean,
+              data.name as string | null,
+              data.test_path as string | null,
               data.expected_result as string | null,
               data.tested_result as string | null,
-              data.succes as boolean | null
+              (data.succes !== null ? data.succes === 1 : null) as boolean | null
             );
             this.data.push(test);
           }
 
           result = true;
         } catch (error) {
-          result = String(error);
+          result = errorMessageHelper.notImplemented;
         }
       })
       .catch((response) => {
-        result = String(response);
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
+      });
+
+    return result;
+  },
+
+  /**
+   * Makes a unique id.
+   */
+  async getUniqueId(): Promise<string | number> {
+    let result: string | number = errorMessageHelper.notImplemented;
+
+    await axios
+      .get(`${APIHelper.tests}id/`, {
+        headers: {
+          "Content-Type": "utf-8"
+        }
+      })
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error(String(response));
+        }
+        return response;
+      })
+      .then((response) => {
+        try {
+          result = response.data as number;
+        } catch (error) {
+          result = errorMessageHelper.unknown;
+        }
+      })
+      .catch((response) => {
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
+      });
+
+    return result;
+  },
+
+  async create(test: Test): Promise<string | true> {
+    let result = errorMessageHelper.notImplemented as string | true;
+
+    await axios
+      .post(APIHelper.tests, {
+        id: test.id,
+        project_id: test.project_id,
+        happy_road: test.happyRoad ? 1 : 0,
+        name: test.name,
+        test_path: test.testPath,
+        expected_result: test.expectedResult,
+        tested_result: test.testedResult,
+        succes: test.succes === null ? null : test.succes ? 1 : 0
+      })
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error(String(response));
+        }
+        this.data.push(test);
+      })
+      .catch((response) => {
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "422":
+            result = errorMessageHelper.badInput;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
       });
 
     return result;

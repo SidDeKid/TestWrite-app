@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { Auth } from "@/model/auth";
+import { auth } from "@/model/auth";
 </script>
 
 <script lang="ts">
 export default {
   data() {
     return {
-      auth: Auth,
       userName: "",
       password: "",
       errorMessage: "",
@@ -14,7 +13,7 @@ export default {
   },
   methods: {
     async logIn() {
-      const result = await this.auth.logInWithData(this.userName, this.password) as string | true;
+      const result = await auth.logInWithData(this.userName, this.password) as string | true;
       if (result !== true) {
         this.errorMessage = result;
         setTimeout(() => this.errorMessage = "", 5000);
@@ -25,7 +24,7 @@ export default {
 </script>
 
 <template>
-  <div class="logIn">
+  <div class="logIn page">
     <h1>Log in</h1>
     <div id="logInForm">
       <input type="text" placeholder="Gebruikersnaam" v-model="userName"> <br>
@@ -41,4 +40,4 @@ export default {
 #logInForm p {
   margin-bottom: 10px;
 }
-</style>../model/Auth@/model/auth
+</style>

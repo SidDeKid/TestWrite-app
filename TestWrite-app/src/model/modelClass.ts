@@ -1,6 +1,10 @@
-import APIHelper from "@/helpers/APIHelper";
+import { APIHelper } from "@/helpers/APIHelper";
 import { reactive } from "vue";
 import axios from "axios";
+import { currentProject } from "@/model/project";
+import type Property from "./property";
+import { properties } from "./property";
+import { errorMessageHelper } from "@/helpers/errorMessageHelper";
 
 export default class ModelClass {
   private _id!: number;
@@ -43,7 +47,13 @@ export default class ModelClass {
     this._hasCurrent = v;
   }
 
-  private APIBase: string = new APIHelper().modelClasses;
+  private _properties: Array<Property> | null = null;
+  public get properties(): Array<Property> | null {
+    return this._properties;
+  }
+  private set properties(v: Array<Property> | null) {
+    this._properties = v;
+  }
 
   constructor(id: number, project_id: number, name: string, hasList: boolean, hasCurrent: boolean) {
     this.id = id;
@@ -53,55 +63,29 @@ export default class ModelClass {
     this.hasCurrent = hasCurrent;
   }
 
-  /**
-   * Gets it's data out of the API.
-   * @returns Succes of the log in, true or errormessage.
-   */
-  public async getData(): Promise<string | true> {
-    let result: true | string = "Failed due to missing implimentation.";
-
-    await axios
-      .get(this.APIBase + this.id, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error(String(response));
-        }
-        return response;
-      })
-      .then((response) => {
-        try {
-          this.id = response.data.id as number;
-          this.project_id = response.data.project_id as number;
-          this.name = response.data.name as string;
-          this.hasList = response.data.hasList as boolean;
-          this.hasCurrent = response.data.hasCurrent as boolean;
-
-          result = true;
-        } catch (error) {
-          result = String(error);
-        }
-      })
-      .catch((response) => {
-        result = response;
-      });
-
+  public async getProperties(): Promise<string | true> {
+    const result = await properties.get(this.id);
+    if (typeof result !== "string") {
+      this.properties = result;
+      return true;
+    }
     return result;
   }
 }
 
 export const modelClasses = reactive({
   data: new Array<ModelClass>(),
-  async fillList(): Promise<true | string> {
+  async fillList(projectId?: number): Promise<true | string> {
     this.data = new Array<ModelClass>();
+    let result: string | true = errorMessageHelper.notImplemented;
 
-    let result: string | true = "Failed due to missing implimentation.";
+    if (projectId === undefined) {
+      if (currentProject.id === null) return "No project selected.";
+      projectId = currentProject.id;
+    }
 
     await axios
-      .get(new APIHelper().modelClasses, {
+      .get(`${APIHelper.projects}${projectId}/model-classes`, {
         headers: {
           "Content-Type": "utf-8"
         }
@@ -119,19 +103,108 @@ export const modelClasses = reactive({
               data.id as number,
               data.project_id as number,
               data.name as string,
-              data.hasList as boolean,
-              data.hasCurrent as boolean
+              (data.has_list === 1) as boolean,
+              (data.has_current === 1) as boolean
             );
             this.data.push(modelClass);
           }
 
           result = true;
         } catch (error) {
-          result = String(error);
+          result = errorMessageHelper.unknown;
         }
       })
       .catch((response) => {
-        result = String(response);
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
+      });
+
+    return result;
+  },
+
+  /**
+   * Makes a unique id.
+   */
+  async getUniqueId(): Promise<string | number> {
+    let result: string | number = errorMessageHelper.notImplemented;
+
+    await axios
+      .get(`${APIHelper.modelClasses}id`, {
+        headers: {
+          "Content-Type": "utf-8"
+        }
+      })
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error(String(response));
+        }
+        return response;
+      })
+      .then((response) => {
+        try {
+          result = response.data as number;
+        } catch (error) {
+          result = errorMessageHelper.unknown;
+        }
+      })
+      .catch((response) => {
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
+      });
+
+    return result;
+  },
+
+  async create(modelClass: ModelClass): Promise<string | true> {
+    let result = errorMessageHelper.notImplemented as string | true;
+
+    await axios
+      .post(APIHelper.modelClasses, {
+        id: modelClass.id,
+        project_id: modelClass.project_id,
+        name: modelClass.name,
+        has_list: modelClass.hasList ? 1 : 0,
+        has_current: modelClass.hasCurrent ? 1 : 0
+      })
+      .then((response) => {
+        if (response.status !== 200) {
+          throw new Error(String(response));
+        }
+        this.data.push(modelClass);
+      })
+      .catch((response) => {
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "422":
+            result = errorMessageHelper.badInput;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
       });
 
     return result;

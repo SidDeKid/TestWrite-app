@@ -4,52 +4,97 @@ body {
 #app {
   --color1: green;
   --color2: darkgreen;
+  /* --color1: #4141d6;
+  --color2: darkblue; */
+  --color4: gray;
+  --color5: white;
+  --color6: black;
+  --font-family: arial;
+  --font-familyEvenHeader: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  --font-familyUnevenHeader: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
+    Arial, sans-serif;
 
   display: grid;
   grid-template-rows: auto 1fr auto;
-  min-height: 100vh;
+  min-height: calc(100vh + 1px);
 }
 
 header,
 main,
 footer {
   width: 100%;
+  overflow: hidden;
 }
-header div:first-child,
-main div:first-child,
-footer div:first-child {
-  max-width: 1200px;
+header .structureContainer,
+main .page,
+footer .structureContainer {
+  width: 1200px;
+  max-width: calc(100% - 30px);
   margin: auto;
   padding: 15px;
+  overflow: hidden;
+}
+header,
+footer {
+  padding: 20px 0;
+  color: var(--color5);
 }
 
 header {
   grid-row: 1 / 2;
   background-color: var(--color1);
 }
+header .structureContainer {
+  display: flex;
+  justify-content: space-between;
+}
+
+header nav {
+  display: flex;
+  align-items: center;
+}
+
+header nav a {
+  color: var(--color5);
+  font-size: 16pt;
+  font-family: var(--font-family);
+  text-decoration: none;
+  border-right: 1px solid var(--color5);
+  padding: 0 10px;
+}
+
+header nav a:first-child {
+  padding-left: 0;
+}
+
+header nav a:last-child {
+  padding-right: 0;
+  border-right: 0;
+}
+
+header nav a.router-link-active,
+header nav a:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
 
 main {
-  --color: black;
-  --backgroundColor: white;
-  --errorColor: red;
-  --fontFamily: arial;
-  --fontFamilyEvenHeader: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
-  --fontFamilyUnevenHeader: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
-    Arial, sans-serif;
-
-  background-color: var(--backgroundColor);
-  color: var(--color);
   grid-row: 2 / 3;
+  background-color: var(--color5);
+  color: var(--color6);
+  font-size: 13pt;
+  font-family: var(--font-family);
 }
 main.dark {
-  --color: white;
-  --backgroundColor: black;
+  --color5: black;
+  --color6: white;
 }
 
-main p,
-main span,
-main label {
-  font-family: var(--fontFamily);
+main textarea,
+main input[type="text"],
+main select {
+  font-size: 13pt !important;
+  font-family: var(--font-family) !important;
 }
 
 main p.errorMessage {
@@ -67,34 +112,33 @@ main h6 {
 }
 
 main h1 {
-  margin-bottom: 20px;
   font-size: 50pt;
-  font-family: var(--fontFamilyUnevenHeader);
+  font-family: var(--font-familyUnevenHeader);
 }
 
 main h2 {
   font-size: 30pt;
-  font-family: var(--fontFamilyEvenHeader);
+  font-family: var(--font-familyEvenHeader);
 }
 
 main h3 {
   font-size: 24pt;
-  font-family: var(--fontFamilyUnevenHeader);
+  font-family: var(--font-familyUnevenHeader);
 }
 
 main h4 {
   font-size: 18pt;
-  font-family: var(--fontFamilyEvenHeader);
+  font-family: var(--font-familyEvenHeader);
 }
 
 main h5 {
   font-size: 16pt;
-  font-family: var(--fontFamilyUnevenHeader);
+  font-family: var(--font-familyUnevenHeader);
 }
 
 main h6 {
   font-size: 14pt;
-  font-family: var(--fontFamilyEvenHeader);
+  font-family: var(--font-familyEvenHeader);
 }
 
 footer {
@@ -102,35 +146,13 @@ footer {
   background-color: var(--color1);
 }
 
-button.primaryButton,
-button.secondaryButton {
-  height: 30px;
-  min-width: 150px;
-  border-radius: 25px;
-  border-width: 3px;
-  border-style: solid;
+footer .structureContainer {
+  display: flex;
+  justify-content: center;
 }
-button.primaryButton:hover,
-button.secondaryButton:hover {
-  cursor: pointer;
-}
-button.primaryButton {
-  background-color: var(--color1);
-  color: white;
-  border-color: var(--color1);
-}
-button.primaryButton:hover {
-  background-color: var(--color2);
-  color: white;
-  border-color: var(--color2);
-}
-button.secondaryButton {
-  background-color: white;
-  color: var(--color2);
-  border-color: var(--color2);
-}
-button.secondaryButton:hover {
-  background-color: var(--color2);
-  color: white;
-  border-color: var(--color2);
+
+footer p {
+  margin: 0;
+  font-size: 13pt;
+  font-family: var(--font-family);
 }

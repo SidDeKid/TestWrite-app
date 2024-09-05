@@ -1,20 +1,9 @@
-export default class APIHelper {
-  private _base: string = "http://testwrite-app.nl/api/";
-  public get base(): string {
-    return this._base;
-  }
-  public get projects(): string {
-    return this._base + "projects/";
-  }
-  public get tests(): string {
-    return this._base + "tests/";
-  }
-  public get modelClasses(): string {
-    return this._base + "model-classes/";
-  }
-  public get properties(): string {
-    return this._base + "properties/";
-  }
+const base = "http://127.0.0.1:8000/api/";
 
-  constructor() {}
-}
+export const APIHelper = {
+  base: base,
+  projects: base + "projects/",
+  tests: base + "tests/",
+  modelClasses: base + "model-classes/",
+  properties: base + "properties/"
+};
