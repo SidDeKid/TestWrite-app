@@ -53,28 +53,14 @@ class ProjectController extends Controller
         return $project->modelClasses()->get();
     }
 
-    /**
-     * Display the relasionships resource.
-     */
-    public function testHeaders(Project $project)
-    {
-        return $project->testHeaders()->get();
-    }
-
-    /**
-     * Display the relasionships resource.
-     */
-    public function testHeadersWithTests(Project $project)
-    {
-        return $project->testHeaders()->with('tests')->get();
-    }
 
     /**
      * Display the relasionships resource.
      */
     public function tests(Project $project)
     {
-        return $project->tests()->get();
+        return $project;
+        // return $project->testHeaders()->with('tests')->get();
     }
 
     /**

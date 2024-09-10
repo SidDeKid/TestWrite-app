@@ -5,7 +5,7 @@ import { auth } from "@/model/auth";
 
 <script lang="ts">
 export default {
-  async mounted() {
+  mounted() {
     this.userTheme = this.$cookies.isKey("userTheme") ? this.$cookies.get("userTheme") : "light" as string;
     this.$cookies.set("userTheme", this.userTheme);
   },

@@ -7,7 +7,9 @@ import Project from "@/model/project";
 export default {
   async mounted() {
     if (projects.data.length === 0) {
-      await projects.fillList();
+      const result = await projects.fillList();
+
+      if (result !== true) console.error(result);
     }
     this.projectsLoaded = true;
 

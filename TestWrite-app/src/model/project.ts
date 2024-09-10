@@ -1,11 +1,20 @@
-import { APIHelper } from "@/helpers/APIHelper";
-import { errorMessageHelper } from "@/helpers/errorMessageHelper";
 import { reactive } from "vue";
 import axios from "axios";
+import { APIHelper } from "@/helpers/APIHelper";
+import { errorMessageHelper } from "@/helpers/errorMessageHelper";
 import ModelClass, { modelClasses } from "./modelClass";
 import Test, { tests } from "./test";
 import { auth } from "./auth";
 import Property, { properties } from "./property";
+
+const refreshAuth = () => {
+  axios.defaults.headers.common = {
+    Authorization: `Bearer ${auth.accessToken !== null ? auth.accessToken : ""}`,
+    "Content-Type": "utf-8"
+  };
+};
+
+refreshAuth();
 
 export default class Project {
   private _id!: number;
@@ -59,6 +68,8 @@ export default class Project {
   public async update(): Promise<string | true> {
     let result = errorMessageHelper.notImplemented as string | true;
 
+    refreshAuth();
+
     await axios
       .put(APIHelper.projects + this.id, {
         name: this.name,
@@ -98,12 +109,10 @@ export default class Project {
   public async delete(): Promise<string | true> {
     let result = errorMessageHelper.notImplemented as string | true;
 
+    refreshAuth();
+
     await axios
-      .delete(APIHelper.projects + this.id, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
+      .delete(APIHelper.projects + this.id)
       .then((response) => {
         if (response.status !== 200) {
           throw new Error(String(response));
@@ -135,7 +144,6 @@ export default class Project {
   public async export(): Promise<string | false> {
     let result = false as string | false;
 
-    // Collect all children.
     if (this.id !== currentProject.id || modelClasses.data.length === 0) {
       const resultModelClasses = await modelClasses.fillList(this.id);
       if (resultModelClasses !== true) {
@@ -151,7 +159,6 @@ export default class Project {
       }
     }
 
-    // Encode to csv.
     let csvContent = "data:text/csv;charset=utf-8,";
     csvContent += "TestWrite-app project back-up; V1.0.0\n";
     csvContent += `project;${this.name}${this.description !== null ? ";" + this.description : ""}`;
@@ -232,12 +239,10 @@ export const projects = reactive({
 
     let result: string | true = errorMessageHelper.notImplemented;
 
+    refreshAuth();
+
     await axios
-      .get(APIHelper.projects, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
+      .get(APIHelper.projects)
       .then((response) => {
         if (response.status !== 200) {
           throw new Error(String(response));
@@ -260,6 +265,7 @@ export const projects = reactive({
         }
       })
       .catch((response) => {
+        console.log(response);
         switch (response.response !== undefined ? response.response.status : null) {
           case "404":
             result = errorMessageHelper.notFound;
@@ -279,12 +285,10 @@ export const projects = reactive({
   async findById(id: number): Promise<Project | string> {
     let result: Project | string = errorMessageHelper.notImplemented;
 
+    refreshAuth();
+
     await axios
-      .get(APIHelper.projects + id, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
+      .get(APIHelper.projects + id)
       .then((response) => {
         if (response.status !== 200) {
           throw new Error(String(response));
@@ -324,12 +328,10 @@ export const projects = reactive({
   async getUniqueId(): Promise<string | number> {
     let result: string | number = errorMessageHelper.notImplemented;
 
+    refreshAuth();
+
     await axios
-      .get(`${APIHelper.projects}id`, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
+      .get(`${APIHelper.projects}id`)
       .then((response) => {
         if (response.status !== 200) {
           throw new Error(String(response));
@@ -360,6 +362,8 @@ export const projects = reactive({
 
   async create(project: Project): Promise<string | true> {
     let result = errorMessageHelper.notImplemented as string | true;
+
+    refreshAuth();
 
     await axios
       .post(APIHelper.projects, {
@@ -416,9 +420,7 @@ export const projects = reactive({
     }
 
     let resultId = await this.getUniqueId();
-    if (typeof resultId === "string") {
-      return resultId;
-    }
+    if (typeof resultId === "string") return resultId;
     const id = resultId;
 
     const project = new Project(
@@ -438,9 +440,7 @@ export const projects = reactive({
       switch (csvObject[0]) {
         case "test":
           resultId = await tests.getUniqueId();
-          if (typeof resultId === "string") {
-            return resultId;
-          }
+          if (typeof resultId === "string") return resultId;
 
           result = await tests.create(
             new Test(
@@ -461,9 +461,7 @@ export const projects = reactive({
           break;
         case "modelClass":
           resultId = await modelClasses.getUniqueId();
-          if (typeof resultId === "string") {
-            return resultId;
-          }
+          if (typeof resultId === "string") return resultId;
 
           previousModelClass = new ModelClass(
             resultId,
@@ -486,9 +484,7 @@ export const projects = reactive({
           }
 
           resultId = await properties.getUniqueId();
-          if (typeof resultId === "string") {
-            return resultId;
-          }
+          if (typeof resultId === "string") return resultId;
 
           result = await properties.create(
             new Property(

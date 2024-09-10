@@ -1,8 +1,18 @@
-import { APIHelper } from "@/helpers/APIHelper";
 import { reactive } from "vue";
 import axios from "axios";
-import { currentProject } from "@/model/project";
+import { APIHelper } from "@/helpers/APIHelper";
 import { errorMessageHelper } from "@/helpers/errorMessageHelper";
+import { auth } from "./auth";
+import { currentProject } from "@/model/project";
+
+const refreshAuth = () => {
+  axios.defaults.headers.common = {
+    Authorization: `Bearer ${auth.accessToken !== null ? auth.accessToken : ""}`,
+    "Content-Type": "utf-8"
+  };
+};
+
+refreshAuth();
 
 export default class Test {
   private _id!: number;
@@ -92,6 +102,8 @@ export default class Test {
   public async update(): Promise<string | true> {
     let result = errorMessageHelper.notImplemented as string | true;
 
+    refreshAuth();
+
     await axios
       .put(APIHelper.tests + this.id, {
         project_id: this.project_id,
@@ -136,6 +148,8 @@ export default class Test {
   public async delete(): Promise<string | true> {
     let result = errorMessageHelper.notImplemented as string | true;
 
+    refreshAuth();
+
     await axios
       .delete(APIHelper.tests + this.id, {
         headers: {
@@ -175,7 +189,10 @@ export const tests = reactive({
   data: new Array<Test>(),
   async fillList(projectId?: number): Promise<true | string> {
     this.data = new Array<Test>();
+
     let result: string | true = errorMessageHelper.notImplemented;
+
+    refreshAuth();
 
     if (projectId === undefined) {
       if (currentProject.id === null) return "No project selected.";
@@ -183,11 +200,7 @@ export const tests = reactive({
     }
 
     await axios
-      .get(`${APIHelper.projects}${projectId}/tests`, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
+      .get(`${APIHelper.projects}${projectId}/tests`)
       .then((response) => {
         if (response.status !== 200) {
           throw new Error(String(response));
@@ -238,12 +251,10 @@ export const tests = reactive({
   async getUniqueId(): Promise<string | number> {
     let result: string | number = errorMessageHelper.notImplemented;
 
+    refreshAuth();
+
     await axios
-      .get(`${APIHelper.tests}id/`, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
+      .get(`${APIHelper.tests}id/`)
       .then((response) => {
         if (response.status !== 200) {
           throw new Error(String(response));
@@ -276,6 +287,8 @@ export const tests = reactive({
 
   async create(test: Test): Promise<string | true> {
     let result = errorMessageHelper.notImplemented as string | true;
+
+    refreshAuth();
 
     await axios
       .post(APIHelper.tests, {

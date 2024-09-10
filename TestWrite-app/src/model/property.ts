@@ -1,7 +1,17 @@
-import { APIHelper } from "@/helpers/APIHelper";
 import { reactive } from "vue";
 import axios from "axios";
+import { APIHelper } from "@/helpers/APIHelper";
 import { errorMessageHelper } from "@/helpers/errorMessageHelper";
+import { auth } from "./auth";
+
+const refreshAuth = () => {
+  axios.defaults.headers.common = {
+    Authorization: `Bearer ${auth.accessToken !== null ? auth.accessToken : ""}`,
+    "Content-Type": "utf-8"
+  };
+};
+
+refreshAuth();
 
 export default class Property {
   private _id!: number;
@@ -57,12 +67,10 @@ export const properties = reactive({
   async get(modelClassId: number): Promise<Array<Property> | string> {
     let result: Array<Property> | string = errorMessageHelper.notImplemented;
 
+    refreshAuth();
+
     await axios
-      .get(`${APIHelper.modelClasses}${modelClassId}/properties`, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
+      .get(`${APIHelper.modelClasses}${modelClassId}/properties`)
       .then((response) => {
         if (response.status !== 200) {
           throw new Error(String(response));
@@ -110,12 +118,10 @@ export const properties = reactive({
   async getUniqueId(): Promise<string | number> {
     let result: string | number = errorMessageHelper.notImplemented;
 
+    refreshAuth();
+
     await axios
-      .get(`${APIHelper.properties}id`, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
+      .get(`${APIHelper.properties}id`)
       .then((response) => {
         if (response.status !== 200) {
           throw new Error(String(response));
@@ -148,6 +154,8 @@ export const properties = reactive({
 
   async create(property: Property): Promise<string | true> {
     let result = errorMessageHelper.notImplemented as string | true;
+
+    refreshAuth();
 
     await axios
       .post(APIHelper.properties, {

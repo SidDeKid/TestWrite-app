@@ -1,6 +1,7 @@
 body {
   margin: 0;
 }
+
 #app {
   --color1: green;
   --color2: darkgreen;
@@ -25,6 +26,7 @@ footer {
   width: 100%;
   overflow: hidden;
 }
+
 header .structureContainer,
 main .page,
 footer .structureContainer {
@@ -34,6 +36,7 @@ footer .structureContainer {
   padding: 15px;
   overflow: hidden;
 }
+
 header,
 footer {
   padding: 20px 0;
@@ -44,6 +47,7 @@ header {
   grid-row: 1 / 2;
   background-color: var(--color1);
 }
+
 header .structureContainer {
   display: flex;
   justify-content: space-between;
@@ -85,6 +89,7 @@ main {
   font-size: 13pt;
   font-family: var(--font-family);
 }
+
 main.dark {
   --color5: black;
   --color6: white;

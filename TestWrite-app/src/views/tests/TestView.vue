@@ -3,15 +3,9 @@ import { tests } from "@/model/test";
 import { projects, currentProject } from "@/model/project";
 import Test from "@/model/test";
 </script>
+
 <script lang="ts">
 export default {
-  unmounted() {
-    if (this.saveTimer === undefined) {
-      clearTimeout(this.saveTimer);
-      this.save();
-    }
-  },
-
   async mounted() {
     if (this.$cookies.isKey("currentProjectId")) {
       const cookieCurrentProject = await projects.findById(this.$cookies.get("currentProjectId"));
@@ -33,14 +27,6 @@ export default {
       textarea.style.removeProperty("height");
       textarea.style.height = `${textarea.scrollHeight + 2}px`;
     }
-
-    window.onbeforeunload = () => {
-      alert("test");
-      if (this.saveTimer === undefined) {
-        clearTimeout(this.saveTimer);
-        this.save();
-      }
-    };
   },
 
   data() {
@@ -49,10 +35,19 @@ export default {
       changedTests: new Array<Test>(),
       createdTests: new Array<Test>(),
       deletedTests: new Array<Test>(),
-      saveTimer: undefined as number | undefined,
+      saveTimer: null as number | null,
       saving: false,
     };
   },
+
+  // beforeRouteLeave() {
+  //   if (this.saveTimer !== null || this.saving === true) {
+  //     console.log(this.saveTimer, this.saving);
+  //     const leave = window.confirm("Nog niet alles is opgeslagen. Weet u zeker dat u de pagina wilt verlaten?");
+
+  //     if (!leave) return false;
+  //   }
+  // },
 
   methods: {
     resize(e: Event) {
@@ -83,7 +78,7 @@ export default {
 
     async save() {
       console.log("Saving...");
-      this.saveTimer = undefined;
+      this.saveTimer = null;
       this.saving = true;
       let result = true as true | string;
 

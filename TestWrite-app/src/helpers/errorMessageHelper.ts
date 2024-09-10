@@ -13,5 +13,6 @@ export const errorMessageHelper = {
   badInput:
     "De gegevens die u ingevoerd heeft zijn niet geschikt. Probeer het alstublieft iets anders of neem contact met ons op.",
   badFileInput: "Dit bestand is niet geschikt. Is het een verouderd bestand?",
-  resourceNotFound: "Onderdeel niet gevonden, ververs alstublieft de pagina."
+  resourceNotFound: "Onderdeel niet gevonden, ververs alstublieft de pagina.",
+  wrongLoginData: "De e-mail of het wachtwoord klopt niet."
 };

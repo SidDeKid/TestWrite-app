@@ -1,10 +1,19 @@
-import { APIHelper } from "@/helpers/APIHelper";
 import { reactive } from "vue";
 import axios from "axios";
-import { currentProject } from "@/model/project";
-import type Property from "./property";
-import { properties } from "./property";
+import { APIHelper } from "@/helpers/APIHelper";
 import { errorMessageHelper } from "@/helpers/errorMessageHelper";
+import { auth } from "./auth";
+import { currentProject } from "@/model/project";
+import Property, { properties } from "./property";
+
+const refreshAuth = () => {
+  axios.defaults.headers.common = {
+    Authorization: `Bearer ${auth.accessToken !== null ? auth.accessToken : ""}`,
+    "Content-Type": "utf-8"
+  };
+};
+
+refreshAuth();
 
 export default class ModelClass {
   private _id!: number;
@@ -84,12 +93,10 @@ export const modelClasses = reactive({
       projectId = currentProject.id;
     }
 
+    refreshAuth();
+
     await axios
-      .get(`${APIHelper.projects}${projectId}/model-classes`, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
+      .get(`${APIHelper.projects}${projectId}/model-classes`)
       .then((response) => {
         if (response.status !== 200) {
           throw new Error(String(response));
@@ -137,12 +144,10 @@ export const modelClasses = reactive({
   async getUniqueId(): Promise<string | number> {
     let result: string | number = errorMessageHelper.notImplemented;
 
+    refreshAuth();
+
     await axios
-      .get(`${APIHelper.modelClasses}id`, {
-        headers: {
-          "Content-Type": "utf-8"
-        }
-      })
+      .get(`${APIHelper.modelClasses}id`)
       .then((response) => {
         if (response.status !== 200) {
           throw new Error(String(response));
@@ -175,6 +180,8 @@ export const modelClasses = reactive({
 
   async create(modelClass: ModelClass): Promise<string | true> {
     let result = errorMessageHelper.notImplemented as string | true;
+
+    refreshAuth();
 
     await axios
       .post(APIHelper.modelClasses, {
