@@ -12,7 +12,7 @@ class Project extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $guarded = ['id'];
 
     public function modelClasses()
     {
@@ -22,10 +22,5 @@ class Project extends Model
     public function testHeaders()
     {
         return $this->hasMany(TestHeader::class);
-    }
-
-    public function tests()
-    {
-        return $this->hasMany(Test::class);
     }
 }

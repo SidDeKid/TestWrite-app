@@ -21,20 +21,18 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $validation = $request->validate([
-            'id' => 'integer|unique:projects',
             'user_id' => 'integer|required|exists:users,id',
             'name' => 'required|max:255',
             'description' => 'max:500'
         ]);
         if($validation)
         {
-            Project::create($request->all());
-            return response()->json(['message' => 'Project created successfully']);
+            $project = Project::create($request->all());
+            return response()->json([
+                'id' => $project->id
+            ], 201);
         }
-        else
-        {
-            return response('Bad Request', 400);
-        }
+        return response('Bad Request', 400);
     }
 
     /**
@@ -42,6 +40,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
+        if (!$this->isAutherised($project)) return response('Unautherised', 403);
         return $project;
     }
 
@@ -50,6 +49,7 @@ class ProjectController extends Controller
      */
     public function modelClasses(Project $project)
     {
+        if (!$this->isAutherised($project)) return response('Unautherised', 403);
         return $project->modelClasses()->get();
     }
 
@@ -59,8 +59,8 @@ class ProjectController extends Controller
      */
     public function tests(Project $project)
     {
-        return $project;
-        // return $project->testHeaders()->with('tests')->get();
+        if (!$this->isAutherised($project)) return response('Unautherised', 403);
+        return $project->testHeaders()->with('tests')->get();
     }
 
     /**
@@ -68,21 +68,18 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
+        if (!$this->isAutherised($project)) return response('Unautherised', 403);
+
         $validation = $request->validate([
             'id' => 'integer|unique',
             'user_id' => 'integer|required|exists:users,id',
             'name' => 'required|max:255',
             'description' => 'max:500'
         ]);
-        if($validation)
-        {
-            $project->update($request->all());
-            return response()->json(['message' => 'Project updated successfully']);
-        }
-        else
-        {
-            return response('Bad Request', 400);
-        }
+        if(!$validation) return response('Bad Request', 400);
+
+        $project->update($request->all());
+        return response()->json(['message' => 'Project updated successfully']);
     }
 
     /**
@@ -90,16 +87,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
+        if (!$this->isAutherised($project)) return response('Unautherised', 403);
         return $project->delete();
-    }
-
-    /**
-     * Make a unique id.
-     */
-    public function getUniqueId()
-    {
-        $lastProject = Project::orderBy('id', 'desc')->first();
-        if (isset($lastProject)) return $lastProject->id + 1;
-        return 1;
     }
 }

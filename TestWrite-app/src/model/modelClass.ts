@@ -6,14 +6,14 @@ import { auth } from "./auth";
 import { currentProject } from "@/model/project";
 import Property, { properties } from "./property";
 
-const refreshAuth = () => {
-  axios.defaults.headers.common = {
-    Authorization: `Bearer ${auth.accessToken !== null ? auth.accessToken : ""}`,
-    "Content-Type": "utf-8"
-  };
+axios.defaults.headers.common = {
+  Authorization: `Bearer ${auth.accessToken !== null ? auth.accessToken : ""}`,
+  "Content-Type": "application/json"
 };
 
-refreshAuth();
+const refreshAuth = () => {
+  axios.defaults.headers.common.Authorization = auth.accessToken !== null ? auth.accessToken : "";
+};
 
 export default class ModelClass {
   private _id!: number;
@@ -73,6 +73,8 @@ export default class ModelClass {
   }
 
   public async getProperties(): Promise<string | true> {
+    refreshAuth();
+
     const result = await properties.get(this.id);
     if (typeof result !== "string") {
       this.properties = result;

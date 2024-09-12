@@ -141,45 +141,51 @@ export default {
 <template>
   <NotFoundView v-if="projectNotFound"></NotFoundView>
   <div v-else-if="project === null" class="projectsDetail page">
-    <div class="section">
-      <h1>Project aan het ophalen</h1>
-      <p>
-        Eén moment gedult a.u.b.
-      </p>
-      <button class="primaryButton">
-        Probleem melden
-      </button>
-    </div>
-  </div>
-  <div v-else class="projectsDetail page">
-    <div class="section">
-      <h1>{{ project.name }}</h1>
-    </div>
-    <div class="section">
-      <h2>Exporteren & verwijderen</h2>
-      <p>
-        Exporteer je project om er een back-up van te maken of om hem lokaal te bewaren voordat je deze verwijderd van
-        het systeem.
-      </p>
-      <p v-if="exportRequestSucces" class="exportRequestSucces">
-        Het exporteren van dit project is gelukt! Je kunt hem nu veilig verwijderen.
-      </p>
-      <p v-if="deleteRequestLoading">
-        Project aan het verwijderen...
-      </p>
-      <div class="buttonSection">
-        <button class="primaryButton" @click="exportRequestLoading ? () => { } : exportProject()">
-          Dit project exporteren
-        </button>
-        <!-- <button class="secondaryButton"
-          @click="exportRequestSucces ? deleteProject() : () => { confirmationPopUp = true }">
-          Dit project verwijderen
-        </button> -->
-        <button class="secondaryButton" @click="deleteProject()">
-          Dit project verwijderen
+    <section>
+      <div class="content">
+        <h1>Project aan het ophalen</h1>
+        <p>
+          Eén moment gedult a.u.b.
+        </p>
+        <button class="primaryButton">
+          Probleem melden
         </button>
       </div>
-    </div>
+    </section>
+  </div>
+  <div v-else class="projectsDetail page">
+    <section>
+      <div class="content">
+        <h1>{{ project.name }}</h1>
+      </div>
+    </section>
+    <section>
+      <div class="content">
+        <h2>Exporteren & verwijderen</h2>
+        <p>
+          Exporteer je project om er een back-up van te maken of om hem lokaal te bewaren voordat je deze verwijderd van
+          het systeem.
+        </p>
+        <p v-if="exportRequestSucces" class="exportRequestSucces">
+          Het exporteren van dit project is gelukt! Je kunt hem nu veilig verwijderen.
+        </p>
+        <p v-if="deleteRequestLoading">
+          Project aan het verwijderen...
+        </p>
+        <div class="buttonSection">
+          <button class="primaryButton" @click="exportRequestLoading ? () => { } : exportProject()">
+            Dit project exporteren
+          </button>
+          <!-- <button class="secondaryButton"
+              @click="exportRequestSucces ? deleteProject() : () => { confirmationPopUp = true }">
+              Dit project verwijderen
+            </button> -->
+          <button class="secondaryButton" @click="deleteProject()">
+            Dit project verwijderen
+          </button>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 

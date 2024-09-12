@@ -1,0 +1,109 @@
+.buttonSection {
+	display: flex;
+	column-gap: 15px;
+}
+
+button.primaryButton,
+button.secondaryButton {
+	height: 40px;
+	min-width: 200px;
+	padding: 0 15px;
+	font-size: 15pt;
+	font-family: var(--fontFamily, arial);
+	border-radius: 25px;
+	border-width: 3px;
+	border-style: solid;
+}
+
+button.primaryButton:hover,
+button.secondaryButton:hover {
+	cursor: pointer;
+}
+
+button.primaryButton {
+	background-color: var(--color1, darkgray);
+	color: white;
+	border-color: var(--color1, darkgray);
+}
+
+button.primaryButton:hover {
+	background-color: var(--color2, gray);
+	color: white;
+	border-color: var(--color2, gray);
+}
+
+button.secondaryButton {
+	background-color: white;
+	color: var(--color2, gray);
+	border-color: var(--color2, gray);
+}
+
+button.secondaryButton:hover {
+	background-color: var(--color2, gray);
+	color: white;
+	border-color: var(--color2, gray);
+}
+
+main.dark button.secondaryButton {
+	border-color: black;
+}
+
+main.dark button.secondaryButton:hover {
+	border-color: var(--color2, gray);
+}
+
+input[type=file] {
+	display: none;
+}
+
+label.primaryLabelButton,
+label.secondaryLabelButton {
+	display: inline-flex;
+	justify-content: center;
+	align-items: center;
+	height: 35.2px;
+	min-width: 165.2px;
+	padding: 0 15px;
+	font-size: 15pt;
+	font-family: var(--fontFamily, arial);
+	border-radius: 25px;
+	border-width: 3px;
+	border-style: solid;
+}
+
+label.primaryLabelButton:hover,
+label.secondaryLabelButton:hover {
+	cursor: pointer;
+}
+
+label.primaryLabelButton {
+	background-color: var(--color1, darkgray);
+	color: white;
+	border-color: var(--color1, darkgray);
+}
+
+label.primaryLabelButton:hover {
+	background-color: var(--color2, gray);
+	color: white;
+	border-color: var(--color2, gray);
+}
+
+label.secondaryLabelButton {
+	background-color: white;
+	color: var(--color2, gray);
+	border-color: var(--color2, gray);
+}
+
+label.secondaryLabelButton:hover {
+	background-color: var(--color2, gray);
+	color: white;
+	border-color: var(--color2, gray);
+}
+
+main.dark label.secondaryLabelButton {
+	border-color: black;
+}
+
+main.dark label.secondaryLabelButton:hover {
+	border-color: var(--color2, gray);
+}

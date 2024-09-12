@@ -1,0 +1,69 @@
+header,
+footer {
+	width: calc(100vw - calc(var(--sectionPaddingY) * 2));
+	padding: 30px var(--sectionPaddingY);
+	background-color: var(--color1, darkgray);
+}
+
+header .content,
+footer .content {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: calc(100vw - calc(var(--sectionPaddingY) * 2));
+	max-width: var(--maxWidth, 1200px);
+	margin: 0 auto;
+}
+
+section {
+	width: calc(100vw - calc(var(--sectionPaddingY) * 2));
+	padding: var(--sectionPaddingX, 75px) var(--sectionPaddingY, 15px);
+}
+
+section .content {
+	width: calc(100vw - calc(var(--sectionPaddingY) * 2));
+	max-width: var(--maxWidth, 1200px);
+	margin: 0 auto;
+}
+
+section.color1 {
+	background-color: var(--color1);
+}
+
+section.color2 {
+	background-color: var(--color2);
+}
+
+section.color3 {
+	background-color: var(--color3);
+}
+
+section.color4 {
+	background-color: var(--color4);
+}
+
+section.color5 {
+	background-color: var(--color5);
+}
+
+section.color6 {
+	background-color: var(--color6);
+}
+
+section.twoColumns .content {
+	display: grid;
+	column-gap: var(--sectionPaddingY);
+	grid-template-columns: 1fr 1fr;
+}
+
+section.threeColumns .content {
+	display: grid;
+	column-gap: var(--sectionPaddingY);
+	grid-template-columns: 1fr 1fr 1fr;
+}
+
+section.fourColumns .content {
+	display: grid;
+	column-gap: var(--sectionPaddingY);
+	grid-template-columns: 1fr 1fr 1fr 1fr;
+}

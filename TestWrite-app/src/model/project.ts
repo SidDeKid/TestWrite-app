@@ -7,21 +7,21 @@ import Test, { tests } from "./test";
 import { auth } from "./auth";
 import Property, { properties } from "./property";
 
-const refreshAuth = () => {
-  axios.defaults.headers.common = {
-    Authorization: `Bearer ${auth.accessToken !== null ? auth.accessToken : ""}`,
-    "Content-Type": "utf-8"
-  };
+axios.defaults.headers.common = {
+  Authorization: `Bearer ${auth.accessToken !== null ? auth.accessToken : ""}`,
+  "Content-Type": "application/json"
 };
 
-refreshAuth();
+const refreshAuth = () => {
+  axios.defaults.headers.common.Authorization = auth.accessToken !== null ? auth.accessToken : "";
+};
 
 export default class Project {
-  private _id!: number;
-  public get id(): number {
+  private _id: number | null = null;
+  public get id(): number | null {
     return this._id;
   }
-  private set id(v: number) {
+  private set id(v: number | null) {
     this._id = v;
   }
 
@@ -49,10 +49,10 @@ export default class Project {
     this._description = v;
   }
 
-  constructor(id: number, user_id: number, name: string, description?: string | null) {
-    this.id = id;
+  constructor(user_id: number, name: string, id?: number | null, description?: string | null) {
     this.user_id = user_id;
     this.name = name;
+    if (id !== undefined) this.id = id;
     if (description !== undefined) this.description = description;
   }
 
@@ -145,14 +145,14 @@ export default class Project {
     let result = false as string | false;
 
     if (this.id !== currentProject.id || modelClasses.data.length === 0) {
-      const resultModelClasses = await modelClasses.fillList(this.id);
+      const resultModelClasses = await modelClasses.fillList(this.id as number);
       if (resultModelClasses !== true) {
         console.error(resultModelClasses);
         return false;
       }
     }
     if (this.id !== currentProject.id || tests.data.length === 0) {
-      const resultTests = await tests.fillList(this.id);
+      const resultTests = await tests.fillList(this.id as number);
       if (resultTests !== true) {
         console.error(resultTests);
         return false;
@@ -251,9 +251,9 @@ export const projects = reactive({
         try {
           for (const data of response.data) {
             const project = new Project(
-              data.id as number,
               data.user_id as number,
               data.name as string,
+              data.id as number,
               data.description as string | null
             );
             this.data.push(project);
@@ -265,7 +265,8 @@ export const projects = reactive({
         }
       })
       .catch((response) => {
-        console.log(response);
+        console.error(response);
+
         switch (response.response !== undefined ? response.response.status : null) {
           case "404":
             result = errorMessageHelper.notFound;
@@ -296,9 +297,9 @@ export const projects = reactive({
 
         try {
           result = new Project(
-            response.data.id as number,
             response.data.user_id as number,
             response.data.name as string,
+            response.data.id as number,
             response.data.description as string | null
           );
         } catch (error) {
@@ -325,57 +326,61 @@ export const projects = reactive({
   /**
    * Makes a unique id.
    */
-  async getUniqueId(): Promise<string | number> {
-    let result: string | number = errorMessageHelper.notImplemented;
+  // async getUniqueId(): Promise<string | number> {
+  //   let result: string | number = errorMessageHelper.notImplemented;
 
-    refreshAuth();
+  //   refreshAuth();
 
-    await axios
-      .get(`${APIHelper.projects}id`)
-      .then((response) => {
-        if (response.status !== 200) {
-          throw new Error(String(response));
-        }
+  //   await axios
+  //     .get(`${APIHelper.projects}id`)
+  //     .then((response) => {
+  //       if (response.status !== 200) {
+  //         throw new Error(String(response));
+  //       }
 
-        try {
-          result = response.data as number;
-        } catch (error) {
-          result = errorMessageHelper.unknown;
-        }
-      })
-      .catch((response) => {
-        switch (response.response !== undefined ? response.response.status : null) {
-          case "404":
-            result = errorMessageHelper.notFound;
-            break;
-          case "429":
-            result = errorMessageHelper.toManyRequests;
-            break;
-          default:
-            result = errorMessageHelper.unknown;
-            break;
-        }
-      });
+  //       try {
+  //         result = response.data as number;
+  //       } catch (error) {
+  //         result = errorMessageHelper.unknown;
+  //       }
+  //     })
+  //     .catch((response) => {
+  //       switch (response.response !== undefined ? response.response.status : null) {
+  //         case "404":
+  //           result = errorMessageHelper.notFound;
+  //           break;
+  //         case "429":
+  //           result = errorMessageHelper.toManyRequests;
+  //           break;
+  //         default:
+  //           result = errorMessageHelper.unknown;
+  //           break;
+  //       }
+  //     });
 
-    return result;
-  },
+  //   return result;
+  // },
 
   async create(project: Project): Promise<string | true> {
     let result = errorMessageHelper.notImplemented as string | true;
 
     refreshAuth();
 
+    console.log(APIHelper.projects);
+
     await axios
       .post(APIHelper.projects, {
-        id: project.id,
         name: project.name,
         user_id: project.user_id,
         description: project.description
       })
       .then((response) => {
-        if (response.status !== 200) {
+        if (response.status !== 201) {
           throw new Error(String(response));
         }
+
+        console.log(response);
+
         this.data.push(project);
         result = true;
       })
@@ -419,14 +424,10 @@ export const projects = reactive({
       return errorMessageHelper.badFileInput;
     }
 
-    let resultId = await this.getUniqueId();
-    if (typeof resultId === "string") return resultId;
-    const id = resultId;
-
     const project = new Project(
-      id,
       auth.id,
       csvProject[1] as string,
+      undefined,
       csvProject[2] as string | null
     );
 
@@ -434,6 +435,8 @@ export const projects = reactive({
     if (result === errorMessageHelper.badInput) return errorMessageHelper.badFileInput;
     else if (result !== true) return result;
     importLoadingData.count++;
+
+    let resultId;
 
     let previousModelClass = null as ModelClass | null;
     for (const csvObject of csvObjects) {
@@ -445,7 +448,7 @@ export const projects = reactive({
           result = await tests.create(
             new Test(
               resultId,
-              project.id,
+              project.id as number,
               csvObject[1] as boolean,
               csvObject[2] as string | null,
               csvObject[3] as string | null,
@@ -465,7 +468,7 @@ export const projects = reactive({
 
           previousModelClass = new ModelClass(
             resultId,
-            project.id,
+            project.id as number,
             csvObject[1] as string,
             csvObject[2] as boolean,
             csvObject[3] as boolean

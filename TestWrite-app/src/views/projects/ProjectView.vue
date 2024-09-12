@@ -48,74 +48,85 @@ export default {
 
 <template>
   <div class="projects page">
-    <div class="section">
-      <h1>Projecten</h1>
-    </div>
-    <div v-if="currentProject.id !== null" class="section" id="section2">
-      <h2>Huidig project</h2>
-      <div class="project current">
-        <h3 class="title">{{ currentProject.name }}</h3>
-        <p class="description">{{ currentProject.description }}</p>
-        <div class="buttons buttonSection">
-          <button class="primaryButton" @click="deselectProject()">
-            Ander project gebruiken
-          </button>
-          <RouterLink v-bind:to="`/projects/${currentProject.id}`">
-            <button class="secondaryButton">
-              Dit project bewerken
+    <section>
+      <div class="content">
+        <h1>Projecten</h1>
+      </div>
+    </section>
+    <section v-if="currentProject.id !== null">
+      <div class="content">
+        <h2>Huidig project</h2>
+        <div class="project current">
+          <h3 class="title">{{ currentProject.name }}</h3>
+          <p class="description">{{ currentProject.description }}</p>
+          <div class="buttons buttonSection">
+            <button class="primaryButton" @click="deselectProject()">
+              Ander project gebruiken
             </button>
-          </RouterLink>
+            <RouterLink v-bind:to="`/projects/${currentProject.id}`">
+              <button class="secondaryButton">
+                Dit project bewerken
+              </button>
+            </RouterLink>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="section" id="section3">
-      <h2>Uw projecten</h2>
-      <div v-for="project in projects.data.filter((project) => project.id !== currentProject.id)" :key="project.id"
-        class="project">
-        <h3 class="title">{{ project.name }}</h3>
-        <p class="description">{{ project.description }}</p>
-        <div class="buttons buttonSection">
-          <button class="primaryButton" @click="selectProject(project as Project)">
-            Dit project gebruiken
-          </button>
-          <RouterLink v-bind:to="`/projects/${project.id}`">
-            <button class="secondaryButton">
-              Dit project bewerken
+    </section>
+    <section>
+      <div class="content">
+        <h2>Uw projecten</h2>
+        <div v-for="project in projects.data.filter((project) => project.id !== currentProject.id)"
+          :key="project.id as number" class="project">
+          <h3 class="title">{{ project.name }}</h3>
+          <p class="description">{{ project.description }}</p>
+          <div class="buttons buttonSection">
+            <button class="primaryButton" @click="selectProject(project as Project)">
+              Dit project gebruiken
             </button>
-          </RouterLink>
+            <RouterLink v-bind:to="`/projects/${project.id}`">
+              <button class="secondaryButton">
+                Dit project bewerken
+              </button>
+            </RouterLink>
+          </div>
         </div>
-      </div>
-      <div v-if="!projectsLoaded">
-        <p>
-          Projecten aan het ophalen...
-        </p>
-      </div>
-      <div v-else-if="projects.data.length === 0">
-        <p>
-          Er zijn geen projecten gevonden.
-        </p>
-        <div class="buttonSection">
+        <div v-if="!projectsLoaded">
+          <p>
+            Projecten aan het ophalen...
+          </p>
+        </div>
+        <div v-else-if="projects.data.length === 0">
+          <p>
+            Er zijn geen projecten gevonden.
+          </p>
+          <div class="buttonSection">
+            <RouterLink to="/projects/create">
+              <button class="primaryButton">
+                Nieuw project toevoegen
+              </button>
+            </RouterLink>
+            <button class="secondaryButton">
+              Probleem melden
+            </button>
+          </div>
+        </div>
+        <div v-else-if="projects.data.filter((project) => project.id !== currentProject.id).length === 0">
+          <p>
+            Er zijn geen andere projecten gevonden.
+          </p>
           <RouterLink to="/projects/create">
             <button class="primaryButton">
               Nieuw project toevoegen
             </button>
           </RouterLink>
-          <button class="secondaryButton">
-            Probleem melden
-          </button>
         </div>
-      </div>
-      <div v-else-if="projects.data.filter((project) => project.id !== currentProject.id).length === 0">
-        <p>
-          Er zijn geen andere projecten gevonden.
-        </p>
-        <RouterLink to="/projects/create">
+        <RouterLink v-else to="/projects/create">
           <button class="primaryButton">
             Nieuw project toevoegen
           </button>
         </RouterLink>
       </div>
-    </div>
+    </section>
   </div>
 </template>
 

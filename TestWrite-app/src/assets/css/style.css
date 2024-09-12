@@ -1,0 +1,104 @@
+body {
+	margin: 0;
+}
+
+#app {
+	--color1: green;
+	--color2: darkgreen;
+	/* --color1: #4141d6;
+	--color2: darkblue; */
+	--color3: lightgray;
+	--color4: darkgray;
+	--color5: gray;
+
+	--font-family: arial;
+	--font-familyEvenHeader: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+	--font-familyUnevenHeader: "Trebuchet MS", "Lucida Sans Unicode", "Lucida Grande", "Lucida Sans",
+		Arial, sans-serif;
+
+	--maxWidth: 1200px;
+	--sectionPaddingX: 75px;
+	--sectionPaddingY: 15px;
+
+	display: grid;
+	grid-template-rows: auto 1fr auto;
+	width: 100%;
+	min-height: 100vh;
+	overflow-x: hidden;
+}
+
+header nav a {
+	color: white;
+	font-size: 16pt;
+	font-family: var(--font-family);
+	text-decoration: none;
+	border-right: 1px solid white;
+	padding: 0 10px;
+}
+
+main {
+	background-color: white;
+	color: black;
+	font-size: 13pt;
+	font-family: var(--font-family);
+}
+
+main.dark {
+	background-color: black;
+	color: white;
+}
+
+main textarea,
+main input[type="text"],
+main select {
+	font-size: 13pt !important;
+	font-family: var(--font-family) !important;
+}
+
+main p.errorMessage {
+	color: var(--errorColor);
+	margin: 0;
+}
+
+main h1,
+main h2,
+main h3,
+main h4,
+main h5,
+main h6 {
+	margin-top: 0;
+}
+
+main h1 {
+	font-size: 50pt;
+	font-family: var(--font-familyUnevenHeader);
+}
+
+main h2 {
+	font-size: 30pt;
+	font-family: var(--font-familyEvenHeader);
+}
+
+main h3 {
+	font-size: 24pt;
+	font-family: var(--font-familyUnevenHeader);
+}
+
+main h4 {
+	font-size: 18pt;
+	font-family: var(--font-familyEvenHeader);
+}
+
+main h5 {
+	font-size: 16pt;
+	font-family: var(--font-familyUnevenHeader);
+}
+
+main h6 {
+	font-size: 14pt;
+	font-family: var(--font-familyEvenHeader);
+}
+
+footer {
+	color: white;
+}

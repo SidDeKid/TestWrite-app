@@ -13,10 +13,6 @@ return new class extends Migration
     {
         Schema::create('tests', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')
-                ->constrained()
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
             $table->foreignId('test_header_id')
                 ->constrained()
                 ->onUpdate('cascade')

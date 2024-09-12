@@ -26,8 +26,10 @@ class TestHeaderController extends Controller
         ]);
         if($validation)
         {
-            TestHeader::create($request->all());
-            return response()->json(['message' => 'Test header created successfully']);
+            $testHeader = TestHeader::create($request->all());
+            return response()->json([
+                'id' => $testHeader->id
+            ], 201);
         }
         else
         {
@@ -77,15 +79,5 @@ class TestHeaderController extends Controller
     public function destroy(TestHeader $testHeader)
     {
         return $testHeader->delete();
-    }
-
-    /**
-     * Make a unique id.
-     */
-    public function getUniqueId()
-    {
-        $lastTestHeader = TestHeader::orderBy('id', 'desc')->first();
-        if (isset($lastTestHeader)) return $lastTestHeader->id + 1;
-        return 1;
     }
 }

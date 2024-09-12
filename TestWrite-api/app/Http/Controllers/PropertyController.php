@@ -29,8 +29,10 @@ class PropertyController extends Controller
         ]);
         if($validation)
         {
-            Property::create($request->all());
-            return response()->json(['message' => 'Property created successfully']);
+            $property = Property::create($request->all());
+            return response()->json([
+                'id' => $property->id
+            ], 201);
         }
         else
         {
@@ -75,15 +77,5 @@ class PropertyController extends Controller
     public function destroy(Property $property)
     {
         return $property->destroy();
-    }
-
-    /**
-     * Make a unique id.
-     */
-    public function getUniqueId()
-    {
-        $lastProperty = Property::orderBy('id', 'desc')->first();
-        if (isset($lastProperty)) return $lastProperty->id + 1;
-        return 1;
     }
 }

@@ -14,5 +14,5 @@ class TestHeader extends Model
         return $this->hasMany(Test::class);
     }
 
-    protected $guarded = [];
+    protected $guarded = ['id'];
 }

@@ -4,14 +4,14 @@ import { APIHelper } from "@/helpers/APIHelper";
 import { errorMessageHelper } from "@/helpers/errorMessageHelper";
 import { auth } from "./auth";
 
-const refreshAuth = () => {
-  axios.defaults.headers.common = {
-    Authorization: `Bearer ${auth.accessToken !== null ? auth.accessToken : ""}`,
-    "Content-Type": "utf-8"
-  };
+axios.defaults.headers.common = {
+  Authorization: `Bearer ${auth.accessToken !== null ? auth.accessToken : ""}`,
+  "Content-Type": "application/json"
 };
 
-refreshAuth();
+const refreshAuth = () => {
+  axios.defaults.headers.common.Authorization = auth.accessToken !== null ? auth.accessToken : "";
+};
 
 export default class Property {
   private _id!: number;

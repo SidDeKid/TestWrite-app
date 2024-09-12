@@ -78,12 +78,11 @@ export default class User {
         }
       )
       .then((response) => {
-        if (response.status !== 200) {
+        if (response.status != 200) {
+          console.log("hier vandaan");
           throw new Error(String(response.status));
         }
-        return response;
-      })
-      .then((response) => {
+
         this.id = response.data.user.id as number;
         this.name = response.data.user.user_name as string;
         this.roleId = response.data.user.role_id as number;
@@ -92,6 +91,8 @@ export default class User {
         result = true;
       })
       .catch((response) => {
+        console.error(response);
+
         switch (response.response !== undefined ? response.response.status : null) {
           case "401":
             result = errorMessageHelper.wrongLoginData;

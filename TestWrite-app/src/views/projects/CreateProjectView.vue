@@ -28,7 +28,7 @@ export default {
      * Create, and automaticly select a project. With validation, and errorhandling.
      */
     async createProject(): Promise<void> {
-      const user_id = auth.id;
+      const userId = auth.id;
       const name = this.name;
       const description = this.description !== "" ? this.description : null;
 
@@ -37,7 +37,7 @@ export default {
       this.nameValidationMessage = null;
       this.descriptionValidationMessage = null;
       this.createRequestSucces = false;
-      if (user_id === null) return;
+      if (userId === null) return;
       if (name.length > 255 || name.length === 0) {
         this.nameValidationMessage = `Dit veld kan niet leeg of langer dan 255 karakters zijn. Huidige lengte: ${name.length} karakters`;
         passedValidation = false;
@@ -50,26 +50,16 @@ export default {
 
       this.createRequestLoading = true;
 
-      // Get unique id for the project.
-      const result1 = await projects.getUniqueId();
-      if (typeof result1 === "string") {
-        this.createRequestLoading = false;
-        this.createRequestFailed = true;
-        return;
-      }
-      const id = result1;
-
-      // Create project
       const project = new Project(
-        id,
-        user_id,
+        userId,
         name,
+        undefined,
         description
       );
-      const result2 = await projects.create(project);
+      const result = await projects.create(project);
 
       // Select project & error handling
-      if (result2 === true) {
+      if (result === true) {
         project.select();
         this.$cookies.set("currentProjectId", project.id);
         this.name = "";
@@ -79,7 +69,7 @@ export default {
       else {
         this.createRequestFailed = true;
         this.createRequestLoading = false;
-        console.error(result2);
+        console.error(result);
       }
 
       this.createRequestLoading = false;
@@ -128,70 +118,77 @@ export default {
 
 <template>
   <div class="createProject page">
-    <div class="section">
-      <h1>Project toevoegen</h1>
-    </div>
-    <div v-if="importOptionAvailable" class="section">
-      <h2>Bestaand project?</h2>
-      <p>
-        Het is mogelijk om oude projecten te exporteren en weer opnieuw te importeren, om ruimte te besparen.
-      </p>
-      <LoadingBar v-if="importRequestLoading || importRequestFailed" :count="importLoadingData.count"
-        :max="importLoadingData.max" :errors="importLoadingData.errors"
-        :force-stop="importRequestFailed && importLoadingData.count !== importLoadingData.max">
-      </LoadingBar>
-      <div class="buttonSection">
-        <label for="importInput" class="primaryLabelButton">
-          <span v-if="importRequestSucces">Extra project importeren</span>
-          <span v-else>Project importeren</span>
-        </label>
-        <input type="file" id="importInput" accept=".csv" @change="importProject" :disabled="importRequestLoading">
-        <button v-if="!importRequestSucces" class="secondaryButton" @click="importOptionAvailable = false"
-          :disabled="importRequestLoading">
-          Nee, afsluiten
-        </button>
-        <RouterLink v-else to="/projects" :disabled="importRequestLoading">
-          <button class="secondaryButton">
-            Projecten bekijken
-          </button>
-        </RouterLink>
+    <section>
+      <div class="content">
+        <h1>Project toevoegen</h1>
       </div>
-    </div>
-    <div class="section">
-      <h2>Nieuw project</h2>
-      <p>
-        Velden met een * zijn verplicht.
-      </p>
-      <div class="createForm">
-        <label for="name">Naam: *</label>
-        <input type="text" id="name" placeholder="Kassasysteem..." v-model="name"
-          v-bind:class="nameValidationMessage === null ? '' : 'wrongInput'">
-        <p v-if="nameValidationMessage !== null" class="validationMessage">{{ nameValidationMessage }}</p>
-        <label for="description">Omschrijving:</label>
-        <textarea id="description" placeholder="Het WPF-kassasysteem voor Nietbestaand Horeca Bedrijf..."
-          v-model="description" rows="5"
-          v-bind:class="descriptionValidationMessage === null ? '' : 'wrongInput'"></textarea>
-        <p v-if="descriptionValidationMessage !== null" class="validationMessage">{{ descriptionValidationMessage }}</p>
-        <p v-if="createRequestLoading" class="createRequestLoading">Aan het laden...</p>
-        <p v-if="createRequestFailed" class="createRequestFailed">Er is iets mis gegaan met het toevoegen van dit
-          project. Probeer het opnieuw.</p>
-        <p v-if="createRequestSucces" class="createRequestSucces">Het project is toegevoegt.</p>
+    </section>
+    <section v-if="importOptionAvailable">
+      <div class="content">
+        <h2>Bestaand project?</h2>
+        <p>
+          Het is mogelijk om oude projecten te exporteren en weer opnieuw te importeren, om ruimte te besparen.
+        </p>
+        <LoadingBar v-if="importRequestLoading || importRequestFailed" :count="importLoadingData.count"
+          :max="importLoadingData.max" :errors="importLoadingData.errors"
+          :force-stop="importRequestFailed && importLoadingData.count !== importLoadingData.max">
+        </LoadingBar>
         <div class="buttonSection">
-          <button class="primaryButton" @click="createRequestLoading ? () => { } : createProject()">
-            <span v-if="createRequestSucces">Nog één toevoegen</span>
-            <span v-else>Toevoegen</span>
+          <label for="importInput" class="primaryLabelButton">
+            <span v-if="importRequestSucces">Extra project importeren</span>
+            <span v-else>Project importeren</span>
+          </label>
+          <input type="file" id="importInput" accept=".csv" @change="importProject" :disabled="importRequestLoading">
+          <button v-if="!importRequestSucces" class="secondaryButton" @click="importOptionAvailable = false"
+            :disabled="importRequestLoading">
+            Nee, afsluiten
           </button>
-          <button v-if="createRequestFailed" class="secondaryButton">
-            Probleem melden
-          </button>
-          <RouterLink v-if="createRequestSucces" to="/projects">
+          <RouterLink v-else to="/projects" :disabled="importRequestLoading">
             <button class="secondaryButton">
               Projecten bekijken
             </button>
           </RouterLink>
         </div>
       </div>
-    </div>
+    </section>
+    <section>
+      <div class="content">
+        <h2>Nieuw project</h2>
+        <p>
+          Velden met een * zijn verplicht.
+        </p>
+        <div class="createForm">
+          <label for="name">Naam: *</label>
+          <input type="text" id="name" placeholder="Kassasysteem..." v-model="name"
+            v-bind:class="nameValidationMessage === null ? '' : 'wrongInput'">
+          <p v-if="nameValidationMessage !== null" class="validationMessage">{{ nameValidationMessage }}</p>
+          <label for="description">Omschrijving:</label>
+          <textarea id="description" placeholder="Het WPF-kassasysteem voor Nietbestaand Horeca Bedrijf..."
+            v-model="description" rows="5"
+            v-bind:class="descriptionValidationMessage === null ? '' : 'wrongInput'"></textarea>
+          <p v-if="descriptionValidationMessage !== null" class="validationMessage">{{ descriptionValidationMessage }}
+          </p>
+          <p v-if="createRequestLoading" class="createRequestLoading">Aan het laden...</p>
+          <p v-if="createRequestFailed" class="createRequestFailed">Er is iets mis gegaan met het toevoegen van dit
+            project. Probeer het opnieuw.</p>
+          <p v-if="createRequestSucces" class="createRequestSucces">Het project is toegevoegt.</p>
+          <div class="buttonSection">
+            <button class="primaryButton" @click="createRequestLoading ? () => { } : createProject()">
+              <span v-if="createRequestSucces">Nog één toevoegen</span>
+              <span v-else>Toevoegen</span>
+            </button>
+            <button v-if="createRequestFailed" class="secondaryButton">
+              Probleem melden
+            </button>
+            <RouterLink v-if="createRequestSucces" to="/projects">
+              <button class="secondaryButton">
+                Projecten bekijken
+              </button>
+            </RouterLink>
+          </div>
+        </div>
+      </div>
+    </section>
   </div>
 </template>
 

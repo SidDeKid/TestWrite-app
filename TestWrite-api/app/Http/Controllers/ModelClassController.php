@@ -29,8 +29,10 @@ class ModelClassController extends Controller
         ]);
         if($validation)
         {
-            ModelClass::create($request->all());
-            return response()->json(['message' => 'ModelClass created successfully']);
+            $modelClass = ModelClass::create($request->all());
+            return response()->json([
+                'id' => $modelClass->id
+            ], 201);
         }
         else
         {
@@ -83,15 +85,5 @@ class ModelClassController extends Controller
     public function destroy(ModelClass $modelClass)
     {
         return $modelClass->destroy();
-    }
-
-    /**
-     * Make a unique id.
-     */
-    public function getUniqueId()
-    {
-        $lastModelClass = ModelClass::orderBy('id', 'desc')->first();
-        if (isset($lastModelClass)) return $lastModelClass->id + 1;
-        return 1;
     }
 }

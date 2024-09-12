@@ -16,7 +16,7 @@ class Client
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (Auth::user()->role_id != 1 && Auth::user()->role_id < 3) {
+        if (Auth::user()->role_id != 3) {
             return response()->json(['message' => 'You do not have the rights for this request.'], 401);
         }
 

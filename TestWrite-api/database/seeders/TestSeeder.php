@@ -14,7 +14,6 @@ class TestSeeder extends Seeder
     public function run(): void
     {
         Test::create([
-            'project_id' => 1,
             'test_header_id' => 1,
             'happy_road' => true,
             'name' => 'Testnaam',

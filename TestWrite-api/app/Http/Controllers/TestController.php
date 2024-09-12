@@ -21,8 +21,6 @@ class TestController extends Controller
     public function store(Request $request)
     {
         $validation = $request->validate([
-            'id' => 'integer|unique:tests',
-            'project_id' => 'integer|required|exists:projects,id',
             'test_header_id' => 'integer|required|exists:test_headers,id',
             'happy_road' => 'required|boolean',
             'name' => 'max:255',
@@ -33,8 +31,10 @@ class TestController extends Controller
         ]);
         if($validation)
         {
-            Test::create($request->all());
-            return response()->json(['message' => 'Test created successfully']);
+            $test = Test::create($request->all());
+            return response()->json([
+                'id' => $test->id
+            ], 201);
         }
         else
         {
@@ -56,8 +56,6 @@ class TestController extends Controller
     public function update(Request $request, Test $test)
     {
         $validation = $request->validate([
-            'id' => 'integer|unique:tests',
-            'project_id' => 'integer|required|exists:projects,id',
             'test_header_id' => 'integer|required|exists:test_headers,id',
             'happy_road' => 'required|boolean',
             'name' => 'max:255',
@@ -83,15 +81,5 @@ class TestController extends Controller
     public function destroy(Test $test)
     {
         return $test->destroy();
-    }
-
-    /**
-     * Make a unique id.
-     */
-    public function getUniqueId()
-    {
-        $lastTest = Test::orderBy('id', 'desc')->first();
-        if (isset($lastTest)) return $lastTest->id + 1;
-        return 1;
     }
 }

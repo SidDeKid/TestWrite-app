@@ -121,58 +121,62 @@ export default {
 
 <template>
   <div class="test page">
-    <div class="section">
-      <h1>Testen</h1>
-    </div>
-    <div class="section">
-      <table v-for="test in tests.data" :key="test.id" class="testCase">
-        <tr>
-          <th colspan="2" class="inputField"><input type="text" v-model="test.name" class="name"></th>
-        </tr>
-        <tr>
-          <th>Testsoort</th>
-          <td class="inputField">
-            <select :class="test.happyRoad ? 'happyRoad' : 'alternativeRoad'" v-model="test.happyRoad"
-              @change="refresh(test as Test)">
-              <option :value="true" class="happyRoad">Hoofdscenario</option>
-              <option :value="false" class="alternativeRoad">Alternatief</option>
-            </select>
-          </td>
-        </tr>
-        <tr>
-          <th>Scenario</th>
-          <td class="inputField">
-            <textarea type="text" v-model="test.testPath" @input="(e) => { resize(e); refresh(test as Test) }"
-              @keydown="resize" @load="resize"></textarea>
-          </td>
-        </tr>
-        <tr>
-          <th>Verwacht resultaat</th>
-          <td class="inputField">
-            <textarea type="text" v-model="test.expectedResult" @input="(e) => { resize(e); refresh(test as Test) }"
-              @keydown="resize"></textarea>
-          </td>
-        </tr>
-        <tr>
-          <th>Daatwerkelijk resultaat</th>
-          <td class="inputField">
-            <textarea type="text" v-model="test.testedResult" @input="(e) => { resize(e); refresh(test as Test) }"
-              @keydown="resize" @load="resize"></textarea>
-          </td>
-        </tr>
-        <tr>
-          <th>Succes</th>
-          <td class="inputField">
-            <select :class="test.succes !== null && test.succes ? 'succes' : 'fail'" v-model="test.succes"
-              @change="refresh(test as Test)">
-              <option :value="true" class="succes">Behaald</option>
-              <option :value="false" class="fail">Gezakt</option>
-              <option :value="null"></option>
-            </select>
-          </td>
-        </tr>
-      </table>
-    </div>
+    <section>
+      <div class="content">
+        <h1>Testen</h1>
+      </div>
+    </section>
+    <section>
+      <div class="content">
+        <table v-for="test in tests.data" :key="test.id" class="testCase">
+          <tr>
+            <th colspan="2" class="inputField"><input type="text" v-model="test.name" class="name"></th>
+          </tr>
+          <tr>
+            <th>Testsoort</th>
+            <td class="inputField">
+              <select :class="test.happyRoad ? 'happyRoad' : 'alternativeRoad'" v-model="test.happyRoad"
+                @change="refresh(test as Test)">
+                <option :value="true" class="happyRoad">Hoofdscenario</option>
+                <option :value="false" class="alternativeRoad">Alternatief</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th>Scenario</th>
+            <td class="inputField">
+              <textarea type="text" v-model="test.testPath" @input="(e) => { resize(e); refresh(test as Test) }"
+                @keydown="resize" @load="resize"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th>Verwacht resultaat</th>
+            <td class="inputField">
+              <textarea type="text" v-model="test.expectedResult" @input="(e) => { resize(e); refresh(test as Test) }"
+                @keydown="resize"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th>Daatwerkelijk resultaat</th>
+            <td class="inputField">
+              <textarea type="text" v-model="test.testedResult" @input="(e) => { resize(e); refresh(test as Test) }"
+                @keydown="resize" @load="resize"></textarea>
+            </td>
+          </tr>
+          <tr>
+            <th>Succes</th>
+            <td class="inputField">
+              <select :class="test.succes !== null && test.succes ? 'succes' : 'fail'" v-model="test.succes"
+                @change="refresh(test as Test)">
+                <option :value="true" class="succes">Behaald</option>
+                <option :value="false" class="fail">Gezakt</option>
+                <option :value="null"></option>
+              </select>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </section>
   </div>
 </template>
 
