@@ -29,7 +29,7 @@ class AuthenticatedSessionController extends Controller
             'token_type' => 'Bearer',
             'user' => $user,
             'status' => 'Login successful',
-        ]);
+        ], 204);
     }
 
     public function destroy(Request $request)
