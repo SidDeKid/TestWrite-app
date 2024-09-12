@@ -6,13 +6,12 @@ on:
   pull_request:
     branches: [ "main" ]
 
+defaults:
+  run:
+    working-directory: ./TestWrite-api
 
 jobs:
   laravel-test:  
-    defaults:
-      run:
-        working-directory: TestWrite-api
-
     runs-on: ubuntu-latest
 
     steps:
