@@ -29,10 +29,10 @@ jobs:
       run: chmod -R 777 storage bootstrap/cache
     - name: Create Database
       run: |
-        mkdir -p database
-        touch database/testwrite-app
+        mkdir -p test-database
+        touch test-database/testwrite-app
     - name: Execute tests (Unit and Feature tests) via PHPUnit/Pest
       env:
         DB_CONNECTION: mysql
-        DB_DATABASE: database/testwrite-app
+        DB_DATABASE: test-database/testwrite-app
       run: php artisan test
