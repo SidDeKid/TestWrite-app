@@ -3,6 +3,7 @@ name: api-deploy-to-accept
 on:
   pull_request_review:
     types: [submitted]
+    branches: [ "dev" ]
 
 defaults:
   run:
