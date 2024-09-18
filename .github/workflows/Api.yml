@@ -10,6 +10,9 @@ defaults:
   run:
     working-directory: ./TestWrite-api
 
+pool:
+  vmImage: ubuntu-latest
+
 stages: 
   - stage: build
     jobs:
