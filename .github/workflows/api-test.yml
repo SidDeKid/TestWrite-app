@@ -1,4 +1,4 @@
-name: api-push
+name: api-test
 
 on:
   push:
@@ -9,7 +9,7 @@ defaults:
     working-directory: ./TestWrite-api
 
 jobs:
-  build-test-envirement:
+  build:
     runs-on: ubuntu-latest
     environment: Test
 
