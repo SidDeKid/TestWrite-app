@@ -1,7 +1,7 @@
 name: api-test
 
 on:
-  push:
+  pull_request:
     branches: [ "main", "dev" ]
 
 defaults:
