@@ -1,8 +1,9 @@
 name: api-deploy-to-accept
 
 on:
-  pull_request_review:
-    types: [submitted]
+  # pull_request_review:
+  #   types: [submitted]
+  push:
     branches: [ "dev" ]
 
 defaults:
