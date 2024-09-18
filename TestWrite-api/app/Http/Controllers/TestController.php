@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Test;
+use App\Models\TestHeader;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TestController extends Controller
 {
@@ -12,7 +14,7 @@ class TestController extends Controller
      */
     public function index()
     {
-        return Test::all();
+        return response('This resource does not have an index', 404);
     }
 
     /**
@@ -20,6 +22,8 @@ class TestController extends Controller
      */
     public function store(Request $request)
     {
+        if (TestHeader::find($request->test_header_id)->first()->project()->first()->user_id != Auth::user()->id) return response('Unauthorized', 401);
+
         $validation = $request->validate([
             'test_header_id' => 'integer|required|exists:test_headers,id',
             'happy_road' => 'required|boolean',
@@ -29,17 +33,12 @@ class TestController extends Controller
             'tested_result' => 'max:500',
             'succes' => 'boolean'
         ]);
-        if($validation)
-        {
-            $test = Test::create($request->all());
-            return response()->json([
-                'id' => $test->id
-            ], 201);
-        }
-        else
-        {
-            return response('Bad Request', 400);
-        }
+        if(!$validation) return response('Bad Request', 400);
+
+        $test = Test::create($request->all());
+        return response()->json([
+            'id' => $test->id
+        ], 201);
     }
 
     /**
@@ -47,6 +46,8 @@ class TestController extends Controller
      */
     public function show(Test $test)
     {
+        if ($test->testHeader()->first()->project()->first()->user_id != Auth::user()->id) return response('Unauthorized', 401);
+
         return $test;
     }
 
@@ -55,6 +56,8 @@ class TestController extends Controller
      */
     public function update(Request $request, Test $test)
     {
+        if ($test->testHeader()->first()->project()->first()->user_id != Auth::user()->id) return response('Unauthorized', 401);
+
         $validation = $request->validate([
             'test_header_id' => 'integer|required|exists:test_headers,id',
             'happy_road' => 'required|boolean',
@@ -80,6 +83,8 @@ class TestController extends Controller
      */
     public function destroy(Test $test)
     {
+        if ($test->testHeader()->first()->project()->first()->user_id != Auth::user()->id) return response('Unauthorized', 401);
+
         return $test->destroy();
     }
 }

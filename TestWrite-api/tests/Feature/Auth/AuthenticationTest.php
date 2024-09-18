@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -10,24 +11,23 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_users_can_authenticate_using_the_login_screen(): void
+    public function test_users_can_authenticate(): void
     {
-        $user = User::factory()->create();
+        $role = Role::factory()->create();
+        $user = User::factory()->for($role)->create();
 
-        $response = $this->post('/login', [
+        $response = $this->post('/api/login', [
             'email' => $user->email,
             'password' => 'password',
-        ]);
-
-        $this->assertAuthenticated();
-        $response->assertNoContent();
+        ])->assertStatus(200);
     }
 
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
-        $user = User::factory()->create();
+        $role = Role::factory()->create();
+        $user = User::factory()->for($role)->create();
 
-        $this->post('/login', [
+        $this->post('/api/login', [
             'email' => $user->email,
             'password' => 'wrong-password',
         ]);
@@ -35,13 +35,15 @@ class AuthenticationTest extends TestCase
         $this->assertGuest();
     }
 
-    public function test_users_can_logout(): void
-    {
-        $user = User::factory()->create();
+    public function test_users_can_logout(): void {
+        $role = Role::factory()->create();
+        $user = User::factory()->for($role)->create();
 
-        $response = $this->actingAs($user)->post('/logout');
+        $this->post('/api/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
 
-        $this->assertGuest();
-        $response->assertNoContent();
+        $this->actingAs($user)->post('/api/logout', [])->assertStatus(200);
     }
 }

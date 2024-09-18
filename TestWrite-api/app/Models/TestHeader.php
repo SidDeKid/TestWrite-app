@@ -9,6 +9,11 @@ class TestHeader extends Model
 {
     use HasFactory;
 
+    public function project()
+    {
+        return $this->belongsTo(Project::class);
+    }
+
     public function tests()
     {
         return $this->hasMany(Test::class);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Project;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ProjectController extends Controller
 {
@@ -12,7 +13,7 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        return Project::all();
+        return Auth::user()->projects()->get();
     }
 
     /**
@@ -21,18 +22,18 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $validation = $request->validate([
-            'user_id' => 'integer|required|exists:users,id',
             'name' => 'required|max:255',
             'description' => 'max:500'
         ]);
-        if($validation)
-        {
-            $project = Project::create($request->all());
-            return response()->json([
-                'id' => $project->id
-            ], 201);
-        }
-        return response('Bad Request', 400);
+        if(!$validation) return response('Bad Request', 400);
+
+        $project = Project::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'user_id' => Auth::user()->id
+        ]);
+
+        return response()->json(['id' => $project->id], 201);
     }
 
     /**
@@ -40,7 +41,7 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        if (!$this->isAutherised($project)) return response('Unautherised', 403);
+        if ($project->user_id != Auth::user()->id) return response('Unauthorized', 401);
         return $project;
     }
 
@@ -49,7 +50,7 @@ class ProjectController extends Controller
      */
     public function modelClasses(Project $project)
     {
-        if (!$this->isAutherised($project)) return response('Unautherised', 403);
+        if ($project->user_id != Auth::user()->id) return response('Unauthorized', 401);
         return $project->modelClasses()->get();
     }
 
@@ -59,7 +60,7 @@ class ProjectController extends Controller
      */
     public function tests(Project $project)
     {
-        if (!$this->isAutherised($project)) return response('Unautherised', 403);
+        if ($project->user_id != Auth::user()->id) return response('Unauthorized', 401);
         return $project->testHeaders()->with('tests')->get();
     }
 
@@ -68,17 +69,16 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        if (!$this->isAutherised($project)) return response('Unautherised', 403);
+        if ($project->user_id != Auth::user()->id) return response('Unauthorized', 401);
 
         $validation = $request->validate([
-            'id' => 'integer|unique',
-            'user_id' => 'integer|required|exists:users,id',
             'name' => 'required|max:255',
             'description' => 'max:500'
         ]);
         if(!$validation) return response('Bad Request', 400);
 
-        $project->update($request->all());
+        $project->update($request->only(['name', 'description']));
+
         return response()->json(['message' => 'Project updated successfully']);
     }
 
@@ -87,7 +87,7 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        if (!$this->isAutherised($project)) return response('Unautherised', 403);
+        if ($project->user_id != Auth::user()->id) return response('Unauthorized', 401);
         return $project->delete();
     }
 }

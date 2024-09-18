@@ -12,7 +12,7 @@ class PropertyController extends Controller
      */
     public function index()
     {
-        return Property::all();
+        return response('This resource does not have an index', 404);
     }
 
     /**

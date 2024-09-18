@@ -29,12 +29,12 @@ class AuthenticatedSessionController extends Controller
             'token_type' => 'Bearer',
             'user' => $user,
             'status' => 'Login successful',
-        ]);
+        ], 200);
     }
 
     public function destroy(Request $request)
     {
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->tokens()->delete();
 
         return response()->json(['message' => 'Logout successful']);
     }
