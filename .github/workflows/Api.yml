@@ -10,12 +10,12 @@ defaults:
   run:
     working-directory: ./TestWrite-api
 
-stages:
-  - build
-  - test
-  - deploy
-
 jobs:
+  stages:
+    - build
+    - test
+    - deploy
+    
   build:
     runs-on: ubuntu-latest
     stage: build
