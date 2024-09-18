@@ -3,6 +3,7 @@
 namespace Tests\Feature\Auth;
 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
@@ -15,7 +16,8 @@ class EmailVerificationTest extends TestCase
 
     public function test_email_can_be_verified(): void
     {
-        $user = User::factory()->unverified()->create();
+        $role = Role::factory()->create();
+        $user = User::factory()->for($role)->unverified()->create();
 
         Event::fake();
 
@@ -34,7 +36,8 @@ class EmailVerificationTest extends TestCase
 
     public function test_email_is_not_verified_with_invalid_hash(): void
     {
-        $user = User::factory()->unverified()->create();
+        $role = Role::factory()->create();
+        $user = User::factory()->for($role)->unverified()->create();
 
         $verificationUrl = URL::temporarySignedRoute(
             'verification.verify',

@@ -33,5 +33,12 @@ class UserSeeder extends Seeder
             'password' => '$mm$24VsTKOqjkQy',
             'role_id' => 3,
         ]);
+
+        User::create([
+            'name' => 'Sid_3_2',
+            'email' => 'sid_3_2@gmail.com',
+            'password' => '$mm$24VsTKOqjkQy',
+            'role_id' => 3,
+        ]);
     }
 }

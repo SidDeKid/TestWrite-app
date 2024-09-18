@@ -17,7 +17,19 @@ class RoleFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'id' => 2,
+            'name' => 'guest'
         ];
+    }
+
+    /**
+     * Get client access.
+     */
+    public function client(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'id' => 3,
+            'name' => 'client'
+        ]);
     }
 }
