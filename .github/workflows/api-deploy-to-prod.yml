@@ -3,6 +3,7 @@ name: api-deploy-to-prod
 on:
   pull_request_review:
     types: [submitted]
+    branches: [ "main" ]
 
 defaults:
   run:
