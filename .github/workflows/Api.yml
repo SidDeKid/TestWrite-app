@@ -14,13 +14,13 @@ pool:
   vmImage: ubuntu-latest
 
 stages: 
-  - stage: build
-    jobs:
-      job: build-job
-        steps:
-        - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
-          with:
-            php-version: '8.2'
+  # - stage: build
+  #   jobs:
+  #     job: build-job
+  #       steps:
+  #       - uses: shivammathur/setup-php@15c43e89cdef867065b0213be354c2841860869e
+  #         with:
+  #           php-version: '8.2'
         
   - stage: run-tests
     jobs:
