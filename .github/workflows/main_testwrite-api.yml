@@ -5,9 +5,12 @@ name: Build and deploy PHP app to Azure Web App - TestWrite-api
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: ./TestWrite-api
 
 jobs:
   build:
