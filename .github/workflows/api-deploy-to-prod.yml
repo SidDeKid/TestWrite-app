@@ -1,8 +1,6 @@
 name: api-deploy-to-prod
 
 on:
-  # pull_request_review:
-  #   types: [submitted]
   push:
     branches: [ "main" ]
 
@@ -12,7 +10,6 @@ defaults:
 
 jobs:
   build:
-    if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     environment: Production
 

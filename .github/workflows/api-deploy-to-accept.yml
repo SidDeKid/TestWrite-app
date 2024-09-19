@@ -1,8 +1,8 @@
 name: api-deploy-to-accept
 
 on:
-  pull_request_review:
-    types: [submitted]
+  push:
+    branches: [ "dev" ]
 
 defaults:
   run:
@@ -10,7 +10,6 @@ defaults:
 
 jobs:
   build:
-    if: github.event.review.state == 'approved'
     runs-on: ubuntu-latest
     environment: Accept
 
@@ -30,4 +29,4 @@ jobs:
       - name: Migrate database
         env:
           DB_CONNECTION: sqlite
-        run: php artisan migrate
+        run: php artisan migrate:fresh
