@@ -48,14 +48,13 @@ jobs:
     environment:
       name: 'production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    permissions:
-      id-token: write #This is required for requesting the JWT
 
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: php-app
+          run-id: ${{ github.event.workflow_run.id }}
 
       - name: Unzip artifact for deployment
         run: unzip release.zip
