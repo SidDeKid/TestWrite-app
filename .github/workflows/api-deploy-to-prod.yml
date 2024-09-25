@@ -45,7 +45,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    working-directory: ./TestWrite-api/build
+    run:
+      working-directory: ./TestWrite-api/build
     environment:
       name: 'production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
