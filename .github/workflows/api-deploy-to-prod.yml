@@ -47,7 +47,7 @@ jobs:
     needs: build
     defaults:
       run:
-        working-directory: build
+        working-directory: testWrite-api/build
     environment:
       name: 'production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
