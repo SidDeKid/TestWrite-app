@@ -50,7 +50,7 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     defaults:
       run:
-        working-directory: ./TestWrite-api/build
+        working-directory: /TestWrite-api/build
 
     steps:
       - name: Download artifact from build job
