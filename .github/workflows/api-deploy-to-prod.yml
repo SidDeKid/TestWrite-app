@@ -34,7 +34,7 @@ jobs:
         run: composer validate --no-check-publish && composer install --prefer-dist --no-progress
 
       - name: Zip artifact for deployment
-        run: zip -r release.zip * # <-- Change path (Initial ./*)
+        run: zip -r release.zip TestWrite-api/* # <-- Change path (Initial ./*)
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
