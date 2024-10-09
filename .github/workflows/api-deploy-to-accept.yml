@@ -1,8 +1,8 @@
 name: api-deploy-to-accept
 
-on:
-  push:
-    branches: [ "dev" ]
+# on:
+#   push:
+#     branches: [ "dev" ]
 
 defaults:
   run:
