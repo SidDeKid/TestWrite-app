@@ -33,6 +33,15 @@ export default {
       this.userTheme = this.userTheme === "light" ? "dark" : "light";
       this.$cookies.set("userTheme", this.userTheme);
     },
+
+    logout() {
+      auth.logOut();
+      
+      this.$cookies.remove("userId");
+      this.$cookies.remove("userName");
+      this.$cookies.remove("userRoleId");
+      this.$cookies.remove("userAccessToken");
+    },
   },
 };
 </script>
@@ -50,11 +59,9 @@ export default {
           {{ userTheme === 'light' ? 'Donkere modus' : 'Lichte modus' }}
         </a>
       </nav>
-      <RouterLink v-if="auth.id !== null" to="/projects">
-        <button class="secondaryButton">
-          Projecten bekijken
-        </button>
-      </RouterLink>
+      <button v-if="auth.id !== null" @click="logout()" class="secondaryButton">
+        Uitloggen
+      </button>
       <RouterLink v-else to="/login">
         <button class="secondaryButton">
           Inloggen

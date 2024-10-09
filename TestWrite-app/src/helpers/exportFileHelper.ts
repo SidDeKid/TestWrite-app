@@ -46,7 +46,7 @@ export const exportFileHelper = {
       .join(";")}\n`;
 
     for (const object of objects) {
-      switch (typeof object) {
+      switch (typeof object as string) {
         case "ModelClass":
           // @ts-ignore
           csvContent += `modelClass;${exportVersionData[exportVersionData.currentVersion].project

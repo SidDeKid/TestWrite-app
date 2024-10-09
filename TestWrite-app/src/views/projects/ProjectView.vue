@@ -13,7 +13,7 @@ export default {
     }
     this.projectsLoaded = true;
 
-    if (this.$cookies.isKey("currentProjectId")) {
+    if (this.$cookies.isKey("currentProjectId") && this.$cookies.get("currentProjectId") !== "null") {
       const cookieCurrentProject = await projects.findById(this.$cookies.get("currentProjectId"));
       if (typeof cookieCurrentProject !== "string") {
         currentProject.id = cookieCurrentProject.id;

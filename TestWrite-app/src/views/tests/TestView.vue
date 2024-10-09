@@ -7,7 +7,7 @@ import Test from "@/model/test";
 <script lang="ts">
 export default {
   async mounted() {
-    if (this.$cookies.isKey("currentProjectId")) {
+    if (this.$cookies.isKey("currentProjectId") && this.$cookies.get("currentProjectId") !== "null") {
       const cookieCurrentProject = await projects.findById(this.$cookies.get("currentProjectId"));
       if (typeof cookieCurrentProject !== "string") {
         currentProject.id = cookieCurrentProject.id;
