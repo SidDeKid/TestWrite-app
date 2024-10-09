@@ -5,9 +5,7 @@ name: api-deploy-to-prod
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:
+    branches: [ "main" ]
 
 defaults:
   run:
@@ -39,7 +37,7 @@ jobs:
         with:
           name: node-app
           # path: release.zip
-          path: TestWrite-api/dist/
+          path: TestWrite-app/dist/
           if-no-files-found: error
 
 
