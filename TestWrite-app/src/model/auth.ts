@@ -79,7 +79,6 @@ export default class User {
       )
       .then((response) => {
         if (response.status != 200) {
-          console.log("hier vandaan");
           throw new Error(String(response.status));
         }
 
@@ -130,25 +129,52 @@ export default class User {
    * @returns Succes of the log out, true or false.
    */
   public async logOut() {
-    return fetch(APIHelper.base + "logout/", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    }).then((response) => {
-      if (!response.ok) {
-        return false;
-      }
+    let result: true | string = "Inloggen is mislukt.";
 
-      this.id = null;
-      this.name = null;
-      this.roleId = null;
-      this.accessToken = null;
-      this.email = null;
-      this.password = null;
+    await axios
+      .post(
+        APIHelper.base + "logout/",
+        "",
+        {
+          headers: {
+            "Content-Type": "application/json"
+          }
+        }
+      )
+      .then((response) => {
+        if (response.status != 200) {
+          throw new Error(String(response.status));
+        }
 
-      return true;
-    });
+        this.id = null;
+        this.name = null;
+        this.roleId = null;
+        this.accessToken = null;
+        this.email = null;
+        this.password = null;
+  
+        result = true;
+      })
+      .catch((response) => {
+        console.error(response);
+
+        switch (response.response !== undefined ? response.response.status : null) {
+          case "404":
+            result = errorMessageHelper.notFound;
+            break;
+          case "422":
+            result = errorMessageHelper.badInput;
+            break;
+          case "429":
+            result = errorMessageHelper.toManyRequests;
+            break;
+          default:
+            result = errorMessageHelper.unknown;
+            break;
+        }
+      });
+
+    return result;
   }
 }
 
