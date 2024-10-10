@@ -56,13 +56,13 @@ export default {
       textarea.style.height = `${textarea.scrollHeight + 2}px`;
     },
 
-    create(position: number) {
+    // create(position: number) {
 
-    },
+    // },
 
-    delete(test: Test) {
+    // delete(test: Test) {
 
-    },
+    // },
 
     refresh(test: Test) {
       if (this.changedTests.findIndex((changedTests) => {

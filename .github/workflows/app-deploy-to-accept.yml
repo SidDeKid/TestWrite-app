@@ -1,4 +1,4 @@
-name: api-deploy-to-accept
+name: app-deploy-to-accept
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
@@ -12,8 +12,27 @@ defaults:
     working-directory: ./TestWrite-app
 
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    environment: Test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js version
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+
+      - name: npm install, build, and test
+        run: |
+          npm install
+          npm run lint
+          npm test
+
   deploy-preview:
     runs-on: ubuntu-latest
+    needs: test
     environment: Accept
 
     steps:

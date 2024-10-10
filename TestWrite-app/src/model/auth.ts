@@ -137,7 +137,8 @@ export default class User {
         "",
         {
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": this.accessToken
           }
         }
       )
