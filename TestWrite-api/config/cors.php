@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:5173')],
+    'allowed_origins' => [env('FRONTEND_URL', 'http://localhost:5173'), 'https://test-write-6ofx0m180-sids-projects-bfa60dd7.vercel.app'],
 
     'allowed_origins_patterns' => [],
 
